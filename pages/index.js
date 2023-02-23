@@ -5,6 +5,7 @@ import "@splidejs/react-splide/css";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import FeaturedPropertyCard from "@/components/ui/cards/featured-property-card";
+import Image from "next/image";
 
 export default function Home() {
     const [properties, setProperties] = useState([]);
@@ -25,11 +26,15 @@ export default function Home() {
 
     return (
         <Layout>
-            <section
-                id="banner"
-                className="flex justify-center relative py-[220px] items-center bg-[url('/housing.jpg')] bg-cover bg-center"
-            >
+            <div className="w-full h-full py-[220px] relative flex items-center">
                 <div className="absolute z-[1] right-0 bottom-0 left-0 w-full h-full overflow-hidden bg-black/40" />
+                <Image
+                    alt="property-image"
+                    src={`/housing.jpg`}
+                    draggable="false"
+                    fill
+                    className="select-none object-cover"
+                />
                 <div className="container z-[2]">
                     <div className="flex flex-col justify-center items-center gap-4 text-white">
                         <h1 className="text-5xl font-bold">
@@ -39,62 +44,65 @@ export default function Home() {
                             Get started in few clicks.
                         </p>
                     </div>
-                    {/* Search Box. */}
                 </div>
-            </section>
+            </div>
 
-            <section
-                id="featured-property"
-                className="flex justify-center items-center bg-gray-100"
-            >
-                <div className="container">
-                    <div className="flex flex-col justify-center items-center gap-y-2 my-10">
-                        <h2 className="text-3xl font-bold">
-                            Featured Properties
-                        </h2>
-                        <p className="text-base">
-                            Handpicked properties by our team.
-                        </p>
-                    </div>
-                    <Splide
-                        className="mb-10"
-                        hasTrack={false}
-                        options={{
-                            mediaQuery: "max",
-                            perPage: 3,
-                            gap: "1.5rem",
-                            flickPower: 100,
-                            arrows: false,
-                            pagination: false,
-                            breakpoints: {
-                                1024: {
-                                    perPage: 2,
-                                    gap: "1.5rem",
+            {properties.length > 0 && (
+                <section
+                    id="featured-property"
+                    className="flex justify-center items-center bg-gray-100"
+                >
+                    <div className="container">
+                        <div className="flex flex-col justify-center items-center gap-y-2 my-10">
+                            <h2 className="text-3xl font-bold">
+                                Featured Properties
+                            </h2>
+                            <p className="text-base">
+                                Handpicked properties by our team.
+                            </p>
+                        </div>
+                        <Splide
+                            className="mb-10"
+                            hasTrack={false}
+                            options={{
+                                mediaQuery: "max",
+                                perPage: 3,
+                                gap: "1.5rem",
+                                flickPower: 100,
+                                arrows: false,
+                                pagination: false,
+                                breakpoints: {
+                                    1024: {
+                                        perPage: 2,
+                                        gap: "1.5rem",
+                                    },
+                                    768:
+                                        properties.length === 1
+                                            ? {
+                                                  gap: "1rem",
+                                                  perPage: 1,
+                                              }
+                                            : {
+                                                  gap: "1rem",
+                                                  fixedWidth: "16rem",
+                                                  focus: "center",
+                                              },
                                 },
-                                768:
-                                    properties.length === 1
-                                        ? {
-                                              gap: "1rem",
-                                              perPage: 1,
-                                          }
-                                        : {
-                                              gap: "1rem",
-                                              fixedWidth: "16rem",
-                                              focus: "center",
-                                          },
-                            },
-                        }}
-                    >
-                        <SplideTrack>
-                            {properties?.map((property, i) => (
-                                <SplideSlide key={i}>
-                                    <FeaturedPropertyCard property={property} />
-                                </SplideSlide>
-                            ))}
-                        </SplideTrack>
-                    </Splide>
-                </div>
-            </section>
+                            }}
+                        >
+                            <SplideTrack>
+                                {properties?.map((property, i) => (
+                                    <SplideSlide key={i}>
+                                        <FeaturedPropertyCard
+                                            property={property}
+                                        />
+                                    </SplideSlide>
+                                ))}
+                            </SplideTrack>
+                        </Splide>
+                    </div>
+                </section>
+            )}
 
             <section
                 id="why-choose-us"

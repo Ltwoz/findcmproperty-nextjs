@@ -1,6 +1,10 @@
 import mongoose from "mongoose";
 
 const PropertySchema = new mongoose.Schema({
+    propertyId: {
+        type: String,
+        required: [true, "Please Enter Property ID"],
+    },
     name: {
         type: String,
         required: [true, "Please Enter Property Name"],
@@ -50,8 +54,8 @@ const PropertySchema = new mongoose.Schema({
         },
     },
     coordinate: {
-        lat: { type: String, required: true },
-        lng: { type: String, required: true },
+        lat: { type: String },
+        lng: { type: String },
     },
     details: {
         areaSqM: {
@@ -65,12 +69,6 @@ const PropertySchema = new mongoose.Schema({
         baths: {
             type: Number,
             required: true,
-        },
-        kitchen: {
-            type: Number,
-        },
-        garage: {
-            type: Number,
         },
     },
     images: [

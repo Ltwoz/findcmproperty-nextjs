@@ -57,7 +57,7 @@ const ListPropertyCard = ({ property }) => {
                         {property?.name}
                     </h1>
                     <p className="text-sm text-gray-500">
-                        {property.address.city}
+                        {property.address.district}
                         {", "}
                         {property.address.province}
                     </p>

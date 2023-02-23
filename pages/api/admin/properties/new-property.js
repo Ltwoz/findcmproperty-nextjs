@@ -1,10 +1,15 @@
-import dbConnect from "../../../../lib/db-connect";
-import {
-    authorizeRoles,
-    isAuthenticatedUser,
-} from "../../../../middlewares/auth";
-import Property from "../../../../models/property";
-import { v2 as cloudinary } from "cloudinary";
+import dbConnect from "@/lib/db-connect";
+import { authorizeRoles, isAuthenticatedUser } from "@/middlewares/auth";
+import Property from "@/models/property";
+import cloudinary from "@/lib/cloudinary";
+
+export const config = {
+    api: {
+        bodyParser: {
+            sizeLimit: "10mb",
+        },
+    },
+};
 
 const handler = async (req, res) => {
     await dbConnect();
@@ -33,10 +38,14 @@ const handler = async (req, res) => {
                     });
                 }
 
+                req.body.user = req.user.id;
+                req.body.images = imagesLinks;
+
                 const property = await Property.create(req.body);
 
                 res.status(201).json({ success: true, property });
             } catch (error) {
+                console.log(error);
                 res.status(500).json({
                     success: false,
                     message: error.message,

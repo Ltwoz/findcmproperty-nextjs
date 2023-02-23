@@ -7,7 +7,7 @@ const nextConfig = {
             "cdn.discordapp.com",
             "cdnb.artstation.com",
             "dummyimage.com",
-            "res.cloudinary.com"
+            "res.cloudinary.com",
         ],
     },
 };

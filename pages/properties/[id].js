@@ -87,11 +87,11 @@ const PropertyDetails = ({ property }) => {
                                         </div>
                                     </div>
 
-                                    <div className="flex justify-between items-start gap-4 mb-4">
-                                        <h1 className="text-3xl font-medium w-2/3">
+                                    <div className="flex flex-col-reverse md:flex-row justify-between items-start gap-4 mb-4">
+                                        <h1 className="text-3xl font-medium md:w-2/3">
                                             {property?.name}
                                         </h1>
-                                        <div className="text-3xl font-medium w-1/3 text-end">
+                                        <div className="text-3xl font-medium md:w-1/3 text-end">
                                             ฿{property.price.toLocaleString()}
                                             {property.type === "Rent" ? (
                                                 <span className="text-base">
@@ -107,7 +107,7 @@ const PropertyDetails = ({ property }) => {
                                         <div className="text-lg">
                                             {property.address.street}{" "}
                                             {property.address.addressEtc}{" "}
-                                            {property.address.city}{" "}
+                                            {property.address.district}{" "}
                                             {property.address.country}{" "}
                                             {property.address.zip}
                                         </div>
@@ -219,7 +219,7 @@ const PropertyDetails = ({ property }) => {
                                     <h2 className="text-xl font-semibold mb-4">
                                         Features
                                     </h2>
-                                    <div className="grid grid-cols-3 text-gray-800 gap-y-2">
+                                    <div className="grid grid-cols-2 md:grid-cols-3 text-gray-800 gap-y-2">
                                         {property.features.balcony && (
                                             <div className="col-span-1 flex items-center gap-2">
                                                 <MdBalcony
@@ -305,7 +305,7 @@ const PropertyDetails = ({ property }) => {
                                     <h2 className="text-xl font-semibold mb-4">
                                         Community Features
                                     </h2>
-                                    <div className="grid grid-cols-3 text-gray-800 gap-y-2">
+                                    <div className="grid grid-cols-2 md:grid-cols-3 text-gray-800 gap-y-2">
                                         {property.services.security && (
                                             <div className="col-span-1 flex items-center gap-2">
                                                 <MdOutlineSecurity

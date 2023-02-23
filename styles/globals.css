@@ -20,5 +20,5 @@ body::-webkit-scrollbar-thumb {
 }
 
 .container {
-    @apply max-w-[1150px] p-5 mx-auto items-center;
+    @apply max-w-[1150px] px-5 pb-5 pt-20 md:p-5 mx-auto items-center;
 }

@@ -1,10 +1,10 @@
-import dbConnect from "../../../../lib/db-connect";
+import dbConnect from "@/lib/db-connect";
 import {
     authorizeRoles,
     isAuthenticatedUser,
-} from "../../../../middlewares/auth";
-import Property from "../../../../models/property";
-import { v2 as cloudinary } from "cloudinary";
+} from "@/middlewares/auth";
+import Property from "@/models/property";
+import cloudinary from "@/lib/cloudinary";
 
 const handler = async (req, res) => {
     await dbConnect();
