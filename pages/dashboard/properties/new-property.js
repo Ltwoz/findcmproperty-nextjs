@@ -87,7 +87,11 @@ const NewPropertyPage = () => {
             <section id="main" className="flex justify-center items-center">
                 <div className="container">
                     <Formik
-                        initialValues={{ category: {}, images: [] }}
+                        initialValues={{
+                            category: {},
+                            images: [],
+                            isActive: true,
+                        }}
                         onSubmit={submitForm}
                     >
                         {(formik) => (
@@ -596,6 +600,71 @@ const NewPropertyPage = () => {
                                                 className="mt-1 p-2 block w-full rounded-md border focus:outline-none border-gray-300 focus:border-blue-600 shadow-sm text-sm md:text-base"
                                             />
                                         </div>
+                                    </div>
+                                </div>
+
+                                <div
+                                    id="submit"
+                                    className="grid grid-cols-12 w-full bg-white border rounded-md gap-4 md:gap-6 p-6"
+                                >
+                                    <div className="col-span-12 flex items-center justify-between">
+                                        <div>
+                                            <h4 className="text-base md:text-lg font-medium leading-6">
+                                                Active
+                                            </h4>
+                                            <p className="mt-1 text-xs md:text-sm text-gray-600">
+                                                Turn this off will hide this porperty from user.
+                                            </p>
+                                        </div>
+                                        <label className="inline-flex relative items-center">
+                                            <input
+                                                type="checkbox"
+                                                name="isActive"
+                                                className="sr-only peer"
+                                                checked={formik.values.isActive}
+                                                readOnly
+                                            />
+                                            <div
+                                                onClick={() => {
+                                                    formik.setFieldValue(
+                                                        "isActive",
+                                                        !formik.values.isActive
+                                                    );
+                                                }}
+                                                className="w-11 h-6 cursor-pointer bg-gray-300 rounded-full peer peer-focus:ring-green-300 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"
+                                            />
+                                        </label>
+                                    </div>
+
+                                    <hr className="col-span-12" />
+
+                                    <div className="col-span-12 flex items-center justify-between">
+                                        <div>
+                                            <h4 className="text-base md:text-lg font-medium leading-6">
+                                                Featured property
+                                            </h4>
+                                            <p className="mt-1 text-xs md:text-sm text-gray-600">
+                                                Turn on will show this property in the homepage.
+                                            </p>
+                                        </div>
+                                        <label className="inline-flex relative items-center">
+                                            <input
+                                                type="checkbox"
+                                                name="isFeatured"
+                                                className="sr-only peer"
+                                                checked={formik.values.isFeatured}
+                                                readOnly
+                                            />
+                                            <div
+                                                onClick={() => {
+                                                    formik.setFieldValue(
+                                                        "isFeatured",
+                                                        !formik.values.isFeatured
+                                                    );
+                                                }}
+                                                className="w-11 h-6 cursor-pointer bg-gray-300 rounded-full peer peer-focus:ring-green-300 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"
+                                            />
+                                        </label>
                                     </div>
 
                                     <hr className="col-span-12" />

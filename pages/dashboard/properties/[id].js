@@ -70,6 +70,9 @@ const UpdatePropertyPage = () => {
     const [images, setImages] = useState([]);
     const [imagesPreview, setImagesPreview] = useState([]);
 
+    const [isActive, setIsActive] = useState(null);
+    const [isFeatured, setIsFeatured] = useState(null);
+
     const toast = useToast();
 
     useEffect(() => {
@@ -128,6 +131,8 @@ const UpdatePropertyPage = () => {
         });
         setImages(property.images);
         setImagesPreview(property.images);
+        setIsActive(property.isActive);
+        setIsFeatured(property.isFeatured);
     }, [property]);
 
     useEffect(() => {
@@ -159,7 +164,19 @@ const UpdatePropertyPage = () => {
             const { data } = await axios.put(
                 `/api/admin/properties/${router.query.id}`,
                 {
+                    name,
+                    description,
+                    propertyId,
+                    price,
+                    type: type.value,
+                    category: category.value,
+                    details,
+                    address,
+                    features,
+                    services,
                     images,
+                    isActive,
+                    isFeatured
                 },
                 config
             );
@@ -206,7 +223,7 @@ const UpdatePropertyPage = () => {
     return (
         <Layout>
             <Head>
-                <title>Update Property - Find CM Property</title>
+                <title>{name} - Find CM Property</title>
             </Head>
             <DashboardNavbar />
             <section id="main" className="flex justify-center items-center">
@@ -218,10 +235,10 @@ const UpdatePropertyPage = () => {
                         >
                             <div className="col-span-12">
                                 <h3 className="text-base md:text-lg font-medium leading-6">
-                                    Create New Property
+                                    Update Property
                                 </h3>
                                 <p className="mt-1 text-xs md:text-sm text-gray-600">
-                                    Create new property here.
+                                    Update property {name}
                                 </p>
                             </div>
 
@@ -843,12 +860,71 @@ const UpdatePropertyPage = () => {
                                     />
                                 </div>
                             </div>
+                        </div>
+                        <div
+                            id="submit"
+                            className="grid grid-cols-12 w-full bg-white border rounded-md gap-4 md:gap-6 p-6"
+                        >
+                            <div className="col-span-12 flex items-center justify-between">
+                                <div>
+                                    <h4 className="text-base md:text-lg font-medium leading-6">
+                                        Active
+                                    </h4>
+                                    <p className="mt-1 text-xs md:text-sm text-gray-600">
+                                        Turn this off will hide this porperty
+                                        from user.
+                                    </p>
+                                </div>
+                                <label className="inline-flex relative items-center">
+                                    <input
+                                        type="checkbox"
+                                        name="isActive"
+                                        className="sr-only peer"
+                                        checked={isActive}
+                                        readOnly
+                                    />
+                                    <div
+                                        onClick={() => {
+                                            setIsActive(!isActive);
+                                        }}
+                                        className="w-11 h-6 cursor-pointer bg-gray-300 rounded-full peer peer-focus:ring-green-300 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"
+                                    />
+                                </label>
+                            </div>
+
+                            <hr className="col-span-12" />
+
+                            <div className="col-span-12 flex items-center justify-between">
+                                <div>
+                                    <h4 className="text-base md:text-lg font-medium leading-6">
+                                        Featured property
+                                    </h4>
+                                    <p className="mt-1 text-xs md:text-sm text-gray-600">
+                                        Turn on will show this property in the
+                                        homepage.
+                                    </p>
+                                </div>
+                                <label className="inline-flex relative items-center">
+                                    <input
+                                        type="checkbox"
+                                        name="isFeatured"
+                                        className="sr-only peer"
+                                        checked={isFeatured}
+                                        readOnly
+                                    />
+                                    <div
+                                        onClick={() => {
+                                            setIsFeatured(!isFeatured);
+                                        }}
+                                        className="w-11 h-6 cursor-pointer bg-gray-300 rounded-full peer peer-focus:ring-green-300 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"
+                                    />
+                                </label>
+                            </div>
 
                             <hr className="col-span-12" />
 
                             <div className="col-span-12 flex items-center justify-end gap-x-4">
                                 <button
-                                    type="button"
                                     onClick={submitForm}
                                     className="inline-flex items-center bg-primary rounded-md transition-all overflow-hidden"
                                 >
@@ -867,7 +943,7 @@ const UpdatePropertyPage = () => {
                                                 d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                                             />
                                         </svg>
-                                        <span className="block">Create</span>
+                                        <span className="block">Update</span>
                                     </div>
                                 </button>
                             </div>

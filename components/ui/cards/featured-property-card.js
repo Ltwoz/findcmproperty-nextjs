@@ -6,10 +6,13 @@ const FeaturedPropertyCard = ({ property }) => {
         <Link href={`/properties/${property._id}`}>
             <div className="w-full bg-white border rounded-lg overflow-hidden shadow-md">
                 <div className="w-full aspect-[16/9] relative flex items-center">
-                    <div className="absolute z-[1] right-0 bottom-0 left-0 w-full h-[50%] overflow-hidden bg-gradient-to-t from-black/70 to-white/0 opacity-100" />
+                    <div className="absolute z-[1] right-0 bottom-0 left-0 w-full h-[60%] overflow-hidden bg-gradient-to-t from-black/80 to-white/0 opacity-100" />
                     <Image
                         alt="property-image"
-                        src={property.images[0]?.url || `https://dummyimage.com/261x261`}
+                        src={
+                            property.images[0]?.url ||
+                            `https://dummyimage.com/261x261`
+                        }
                         draggable="false"
                         fill
                         className="select-none object-cover"
@@ -31,6 +34,14 @@ const FeaturedPropertyCard = ({ property }) => {
                             }
                         >
                             {property.type}
+                        </div>
+                    </div>
+                    <div className="flex absolute bottom-3 left-3 gap-x-2 z-[1]">
+                        <div className="text-2xl text-white font-medium">
+                            ฿{property.price.toLocaleString()}
+                            {property.type === "Rent" ? (
+                                <span className="text-sm font-normal"> / month</span>
+                            ) : null}
                         </div>
                     </div>
                 </div>
