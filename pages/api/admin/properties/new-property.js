@@ -17,29 +17,36 @@ const handler = async (req, res) => {
     switch (req.method) {
         case "POST":
             try {
-                let images = [];
+                const newImages = req.body.images || [];
+                const updateImages = [];
 
-                if (typeof req.body.images === "string") {
-                    images.push(req.body.images);
-                } else {
-                    images = req.body.images;
+                const uploadPromises = [];
+
+                for (let i = 0; i < newImages.length; i++) {
+                    uploadPromises.push(
+                        cloudinary.uploader.upload(
+                            newImages[i],
+                            function (result) {
+                                console.log(result);
+                            },
+                            {
+                                upload_preset: "ml_default",
+                            }
+                        )
+                    );
                 }
 
-                const imagesLinks = [];
+                const uploadedImages = await Promise.all(uploadPromises);
 
-                for (let i = 0; i < images.length; i++) {
-                    const result = await cloudinary.uploader.upload(images[i], {
-                        folder: "properties",
-                    });
-
-                    imagesLinks.push({
-                        public_id: result.public_id,
-                        url: result.secure_url,
+                for (let i = 0; i < uploadedImages.length; i++) {
+                    updateImages.push({
+                        public_id: uploadedImages[i].public_id,
+                        url: uploadedImages[i].secure_url,
                     });
                 }
 
                 req.body.user = req.user.id;
-                req.body.images = imagesLinks;
+                req.body.images = updateImages;
 
                 const property = await Property.create(req.body);
 

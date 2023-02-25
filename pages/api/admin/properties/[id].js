@@ -52,25 +52,34 @@ const handler = async (req, res) => {
                     );
 
                     // Deleting Images From Cloudinary
+                    const deletePromises = [];
+
                     for (let i = 0; i < unmatchedImages.length; i++) {
-                        await cloudinary.uploader.destroy(
-                            unmatchedImages[i].public_id
+                        deletePromises.push(
+                            cloudinary.uploader.destroy(
+                                unmatchedImages[i].public_id
+                            )
                         );
                     }
 
+                    await Promise.all(deletePromises);
+
+                    // Upload Images
+                    const uploadPromises = [];
+
                     for (let i = 0; i < newImages.length; i++) {
                         if (typeof newImages[i] === "string") {
-                            const result = await cloudinary.uploader.upload(
+                            const uploadPromise = cloudinary.uploader.upload(
                                 newImages[i],
+                                function (result) {
+                                    console.log(result);
+                                },
                                 {
-                                    folder: "properties",
+                                    upload_preset: "ml_default",
                                 }
                             );
 
-                            updateImages.push({
-                                public_id: result.public_id,
-                                url: result.secure_url,
-                            });
+                            uploadPromises.push(uploadPromise);
                         } else {
                             updateImages.push({
                                 public_id: newImages[i].public_id,
@@ -78,6 +87,17 @@ const handler = async (req, res) => {
                             });
                         }
                     }
+
+                    const uploadedImages = await Promise.all(uploadPromises);
+
+                    for (let i = 0; i < uploadedImages.length; i++) {
+                        const result = uploadedImages[i];
+                        updateImages.push({
+                            public_id: result.public_id,
+                            url: result.secure_url,
+                        });
+                    }
+
                     req.body.images = updateImages;
                 }
 
