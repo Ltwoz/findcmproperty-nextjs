@@ -24,10 +24,7 @@ const typeOptions = [
 const UpdatePropertyPage = () => {
     const router = useRouter();
 
-    const [property, setProperty] = useState([]);
-    const [selectedCategory, setSelectedCategory] = useState({});
-    const [selectedType, setSelectedType] = useState({});
-    const [imagesPreview, setImagesPreview] = useState([]);
+    const [property, setProperty] = useState({});
 
     // CRUD State.
     const [loading, setLoading] = useState(true);
@@ -38,8 +35,8 @@ const UpdatePropertyPage = () => {
     const [description, setDescription] = useState("");
     const [propertyId, setPropertyId] = useState("");
     const [price, setPrice] = useState("");
-    const [type, setType] = useState("");
-    const [category, setCategory] = useState("");
+    const [type, setType] = useState({});
+    const [category, setCategory] = useState({});
 
     const [details, setDetails] = useState({
         areaSqM: "",
@@ -70,23 +67,68 @@ const UpdatePropertyPage = () => {
         parking: "",
         garden: "",
     });
+    const [images, setImages] = useState([]);
+    const [imagesPreview, setImagesPreview] = useState([]);
 
     const toast = useToast();
 
     useEffect(() => {
         const getProperty = async () => {
-            const { data } = await axios.get(
-                `/api/admin/properties/${router.query.id}`
-            );
-            setProperty(data.property);
-            setLoading(false);
+            try {
+                const { data } = await axios.get(
+                    `/api/admin/properties/${router.query.id}`
+                );
+                setProperty(data.property);
+            } catch (error) {
+                console.error(error);
+            }
         };
 
-        getProperty().catch(() => {
-            console.error;
-            setLoading(false);
-        });
+        if (router.query.id) {
+            getProperty();
+        }
     }, [router.query.id]);
+
+    useEffect(() => {
+        setName(property.name);
+        setDescription(property.description);
+        setPropertyId(property.propertyId);
+        setPrice(property.price);
+        setType({ label: property.type, value: property.type });
+        setCategory({ label: property.category, value: property.category });
+
+        setDetails({
+            areaSqM: property.details?.areaSqM,
+            beds: property.details?.beds,
+            baths: property.details?.baths,
+        });
+        setAddress({
+            street: property.address?.street,
+            addressEtc: property.address?.addressEtc,
+            district: property.address?.district,
+            province: property.address?.province,
+            zip: property.address?.zip,
+        });
+        setFeatures({
+            ac: property.features?.ac,
+            balcony: property.features?.balcony,
+            tv: property.features?.tv,
+            internet: property.features?.internet,
+            pet: property.features?.pet,
+            bathtub: property.features?.bathtub,
+        });
+        setServices({
+            security: property.services?.security,
+            cctv: property.services?.cctv,
+            elevator: property.services?.elevator,
+            pool: property.services?.pool,
+            gym: property.services?.gym,
+            parking: property.services?.parking,
+            garden: property.services?.garden,
+        });
+        setImages(property.images);
+        setImagesPreview(property.images);
+    }, [property]);
 
     useEffect(() => {
         if (error) {
@@ -108,31 +150,57 @@ const UpdatePropertyPage = () => {
         }
     }, [error, isSuccess, toast]);
 
-    async function submitForm(values, actions) {
+    async function submitForm(e) {
+        e.preventDefault();
         const config = { headers: { "Content-Type": "application/json" } };
 
+        setLoading(true);
         try {
             const { data } = await axios.put(
-                `/api/admin/properties/${"id"}`,
-                values,
+                `/api/admin/properties/${router.query.id}`,
+                {
+                    images,
+                },
                 config
             );
 
             setIsSuccess(data.success);
+            console.log(data);
         } catch (error) {
             setError(error.message);
             console.error(error.message);
+        } finally {
+            setLoading(false);
         }
 
         // console.log(JSON.stringify(values, null, 2));
-        console.log(values);
+        // console.log(features);
     }
 
-    function removeImage(e, actions) {
-        const filtered = imagesPreview.filter((item, idx) => idx !== e);
+    const updateProductImagesChange = (e) => {
+        const files = Array.from(e.target.files);
+
+        files.forEach((file) => {
+            const reader = new FileReader();
+
+            reader.onload = () => {
+                if (reader.readyState === 2) {
+                    setImagesPreview((old) => [...old, reader.result]);
+                    setImages((old) => [...old, reader.result]);
+                }
+            };
+
+            reader.readAsDataURL(file);
+        });
+    };
+
+    function removeImage(imageIdx) {
+        const filtered = imagesPreview.filter((item, idx) => idx !== imageIdx);
         setImagesPreview(filtered);
-        actions.values.images?.splice(e, 1);
-        console.log(filtered);
+
+        const newImages = [...images];
+        newImages.splice(imageIdx, 1);
+        setImages(newImages);
     }
 
     return (
@@ -163,9 +231,11 @@ const UpdatePropertyPage = () => {
                                 <label className="block text-xs md:text-sm font-medium tracking-wide">
                                     Name
                                 </label>
-                                <Field
+                                <input
                                     type="text"
                                     name="name"
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
                                     className="mt-1 p-2 block w-full rounded-md border focus:outline-none border-gray-300 focus:border-blue-600 shadow-sm text-sm md:text-base"
                                 />
                             </div>
@@ -173,10 +243,13 @@ const UpdatePropertyPage = () => {
                                 <label className="block text-xs md:text-sm font-medium tracking-wide">
                                     Description
                                 </label>
-                                <Field
-                                    as="textarea"
+                                <textarea
                                     type="text"
                                     name="description"
+                                    value={description}
+                                    onChange={(e) =>
+                                        setDescription(e.target.value)
+                                    }
                                     placeholder="Some description for this property"
                                     rows="4"
                                     className="mt-1 p-2 block w-full min-h-[42px] max-h-[210px] rounded-md border focus:outline-none border-gray-300 focus:border-blue-600 shadow-sm text-sm md:text-base"
@@ -186,9 +259,13 @@ const UpdatePropertyPage = () => {
                                 <label className="block text-xs md:text-sm font-medium tracking-wide">
                                     Property ID
                                 </label>
-                                <Field
+                                <input
                                     type="text"
                                     name="propertyId"
+                                    value={propertyId}
+                                    onChange={(e) =>
+                                        setPropertyId(e.target.value)
+                                    }
                                     className="mt-1 p-2 block w-full rounded-md border focus:outline-none border-gray-300 focus:border-blue-600 shadow-sm text-sm md:text-base"
                                 />
                             </div>
@@ -196,9 +273,11 @@ const UpdatePropertyPage = () => {
                                 <label className="block text-xs md:text-sm font-medium tracking-wide">
                                     Price
                                 </label>
-                                <Field
+                                <input
                                     type="number"
                                     name="price"
+                                    value={price}
+                                    onChange={(e) => setPrice(e.target.value)}
                                     className="mt-1 p-2 block w-full rounded-md border focus:outline-none border-gray-300 focus:border-blue-600 shadow-sm text-sm md:text-base"
                                 />
                             </div>
@@ -206,37 +285,25 @@ const UpdatePropertyPage = () => {
                                 <label className="block text-xs md:text-sm font-medium tracking-wide">
                                     Type
                                 </label>
-                                {/* <Select
+                                <Select
                                     name="type"
                                     placeholder="Select type"
                                     options={typeOptions}
-                                    selected={selectedType}
-                                    setSelected={(option) => {
-                                        setSelectedType(option);
-                                        formik.setFieldValue(
-                                            "type",
-                                            option.value
-                                        );
-                                    }}
-                                /> */}
+                                    selected={type}
+                                    setSelected={setType}
+                                />
                             </div>
                             <div className="col-span-6 md:col-span-3">
                                 <label className="block text-xs md:text-sm font-medium tracking-wide">
                                     Category
                                 </label>
-                                {/* <Select
+                                <Select
                                     name="category"
                                     placeholder="Select category"
                                     options={categoryOptions}
-                                    selected={selectedCategory}
-                                    setSelected={(option) => {
-                                        setSelectedCategory(option);
-                                        formik.setFieldValue(
-                                            "category",
-                                            option.value
-                                        );
-                                    }}
-                                /> */}
+                                    selected={category}
+                                    setSelected={setCategory}
+                                />
                             </div>
                         </div>
                         <div
@@ -258,9 +325,16 @@ const UpdatePropertyPage = () => {
                                 <label className="block text-xs md:text-sm font-medium tracking-wide">
                                     Bedroom
                                 </label>
-                                <Field
+                                <input
                                     type="number"
                                     name="details.beds"
+                                    value={details.beds}
+                                    onChange={(e) =>
+                                        setDetails((prev) => ({
+                                            ...prev,
+                                            beds: e.target.value,
+                                        }))
+                                    }
                                     className="mt-1 p-2 block w-full rounded-md border focus:outline-none border-gray-300 focus:border-blue-600 shadow-sm text-sm md:text-base"
                                 />
                             </div>
@@ -268,9 +342,16 @@ const UpdatePropertyPage = () => {
                                 <label className="block text-xs md:text-sm font-medium tracking-wide">
                                     Bathroom
                                 </label>
-                                <Field
+                                <input
                                     type="number"
                                     name="details.baths"
+                                    value={details.baths}
+                                    onChange={(e) =>
+                                        setDetails((prev) => ({
+                                            ...prev,
+                                            baths: e.target.value,
+                                        }))
+                                    }
                                     className="mt-1 p-2 block w-full rounded-md border focus:outline-none border-gray-300 focus:border-blue-600 shadow-sm text-sm md:text-base"
                                 />
                             </div>
@@ -278,9 +359,16 @@ const UpdatePropertyPage = () => {
                                 <label className="block text-xs md:text-sm font-medium tracking-wide">
                                     Area (sqm.)
                                 </label>
-                                <Field
+                                <input
                                     type="number"
                                     name="details.areaSqM"
+                                    value={details.areaSqM}
+                                    onChange={(e) =>
+                                        setDetails((prev) => ({
+                                            ...prev,
+                                            areaSqM: e.target.value,
+                                        }))
+                                    }
                                     className="mt-1 p-2 block w-full rounded-md border focus:outline-none border-gray-300 focus:border-blue-600 shadow-sm text-sm md:text-base"
                                 />
                             </div>
@@ -301,9 +389,17 @@ const UpdatePropertyPage = () => {
                                     <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                                         <div className="col-span-1 flex items-center">
                                             <label className="flex gap-2 hover:cursor-pointer select-none text-sm md:text-base">
-                                                <Field
+                                                <input
                                                     type="checkbox"
                                                     name="features.ac"
+                                                    checked={features.ac}
+                                                    onChange={(e) =>
+                                                        setFeatures((prev) => ({
+                                                            ...prev,
+                                                            ac: e.target
+                                                                .checked,
+                                                        }))
+                                                    }
                                                     className="p-2 block rounded-md border focus:outline-none border-gray-300 focus:border-blue-600 shadow-sm text-sm md:text-base hover:cursor-pointer"
                                                 />
                                                 Air Conditioner
@@ -311,9 +407,18 @@ const UpdatePropertyPage = () => {
                                         </div>
                                         <div className="col-span-1 flex items-center">
                                             <label className="flex gap-2 hover:cursor-pointer select-none text-sm md:text-base">
-                                                <Field
+                                                <input
                                                     type="checkbox"
                                                     name="features.balcony"
+                                                    checked={features.balcony}
+                                                    onChange={(e) =>
+                                                        setFeatures((prev) => ({
+                                                            ...prev,
+                                                            balcony:
+                                                                e.target
+                                                                    .checked,
+                                                        }))
+                                                    }
                                                     className="p-2 block rounded-md border focus:outline-none border-gray-300 focus:border-blue-600 shadow-sm text-sm md:text-base hover:cursor-pointer"
                                                 />
                                                 Balcony
@@ -321,9 +426,17 @@ const UpdatePropertyPage = () => {
                                         </div>
                                         <div className="col-span-1 flex items-center">
                                             <label className="flex gap-2 hover:cursor-pointer select-none text-sm md:text-base">
-                                                <Field
+                                                <input
                                                     type="checkbox"
                                                     name="features.tv"
+                                                    checked={features.tv}
+                                                    onChange={(e) =>
+                                                        setFeatures((prev) => ({
+                                                            ...prev,
+                                                            tv: e.target
+                                                                .checked,
+                                                        }))
+                                                    }
                                                     className="p-2 block rounded-md border focus:outline-none border-gray-300 focus:border-blue-600 shadow-sm text-sm md:text-base hover:cursor-pointer"
                                                 />
                                                 Television
@@ -331,9 +444,18 @@ const UpdatePropertyPage = () => {
                                         </div>
                                         <div className="col-span-1 flex items-center">
                                             <label className="flex gap-2 hover:cursor-pointer select-none text-sm md:text-base">
-                                                <Field
+                                                <input
                                                     type="checkbox"
                                                     name="features.internet"
+                                                    checked={features.internet}
+                                                    onChange={(e) =>
+                                                        setFeatures((prev) => ({
+                                                            ...prev,
+                                                            internet:
+                                                                e.target
+                                                                    .checked,
+                                                        }))
+                                                    }
                                                     className="p-2 block rounded-md border focus:outline-none border-gray-300 focus:border-blue-600 shadow-sm text-sm md:text-base hover:cursor-pointer"
                                                 />
                                                 Internet
@@ -341,9 +463,17 @@ const UpdatePropertyPage = () => {
                                         </div>
                                         <div className="col-span-1 flex items-center">
                                             <label className="flex gap-2 hover:cursor-pointer select-none text-sm md:text-base">
-                                                <Field
+                                                <input
                                                     type="checkbox"
                                                     name="features.pet"
+                                                    checked={features.pet}
+                                                    onChange={(e) =>
+                                                        setFeatures((prev) => ({
+                                                            ...prev,
+                                                            pet: e.target
+                                                                .checked,
+                                                        }))
+                                                    }
                                                     className="p-2 block rounded-md border focus:outline-none border-gray-300 focus:border-blue-600 shadow-sm text-sm md:text-base hover:cursor-pointer"
                                                 />
                                                 Pet Allowed
@@ -351,9 +481,18 @@ const UpdatePropertyPage = () => {
                                         </div>
                                         <div className="col-span-1 flex items-center">
                                             <label className="flex gap-2 hover:cursor-pointer select-none text-sm md:text-base">
-                                                <Field
+                                                <input
                                                     type="checkbox"
                                                     name="features.bathtub"
+                                                    checked={features.bathtub}
+                                                    onChange={(e) =>
+                                                        setFeatures((prev) => ({
+                                                            ...prev,
+                                                            bathtub:
+                                                                e.target
+                                                                    .checked,
+                                                        }))
+                                                    }
                                                     className="p-2 block rounded-md border focus:outline-none border-gray-300 focus:border-blue-600 shadow-sm text-sm md:text-base hover:cursor-pointer"
                                                 />
                                                 Bathtub
@@ -375,9 +514,18 @@ const UpdatePropertyPage = () => {
                                     <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                                         <div className="col-span-1 flex items-center">
                                             <label className="flex gap-2 hover:cursor-pointer select-none text-sm md:text-base">
-                                                <Field
+                                                <input
                                                     type="checkbox"
                                                     name="services.security"
+                                                    checked={services.security}
+                                                    onChange={(e) =>
+                                                        setServices((prev) => ({
+                                                            ...prev,
+                                                            security:
+                                                                e.target
+                                                                    .checked,
+                                                        }))
+                                                    }
                                                     className="p-2 block rounded-md border focus:outline-none border-gray-300 focus:border-blue-600 shadow-sm text-sm md:text-base hover:cursor-pointer"
                                                 />
                                                 Security
@@ -385,9 +533,17 @@ const UpdatePropertyPage = () => {
                                         </div>
                                         <div className="col-span-1 flex items-center">
                                             <label className="flex gap-2 hover:cursor-pointer select-none text-sm md:text-base">
-                                                <Field
+                                                <input
                                                     type="checkbox"
                                                     name="services.cctv"
+                                                    checked={services.cctv}
+                                                    onChange={(e) =>
+                                                        setServices((prev) => ({
+                                                            ...prev,
+                                                            cctv: e.target
+                                                                .checked,
+                                                        }))
+                                                    }
                                                     className="p-2 block rounded-md border focus:outline-none border-gray-300 focus:border-blue-600 shadow-sm text-sm md:text-base hover:cursor-pointer"
                                                 />
                                                 CCTV
@@ -395,9 +551,18 @@ const UpdatePropertyPage = () => {
                                         </div>
                                         <div className="col-span-1 flex items-center">
                                             <label className="flex gap-2 hover:cursor-pointer select-none text-sm md:text-base">
-                                                <Field
+                                                <input
                                                     type="checkbox"
                                                     name="services.elevator"
+                                                    checked={services.elevator}
+                                                    onChange={(e) =>
+                                                        setServices((prev) => ({
+                                                            ...prev,
+                                                            elevator:
+                                                                e.target
+                                                                    .checked,
+                                                        }))
+                                                    }
                                                     className="p-2 block rounded-md border focus:outline-none border-gray-300 focus:border-blue-600 shadow-sm text-sm md:text-base hover:cursor-pointer"
                                                 />
                                                 Elevator
@@ -405,9 +570,17 @@ const UpdatePropertyPage = () => {
                                         </div>
                                         <div className="col-span-1 flex items-center">
                                             <label className="flex gap-2 hover:cursor-pointer select-none text-sm md:text-base">
-                                                <Field
+                                                <input
                                                     type="checkbox"
                                                     name="services.pool"
+                                                    checked={services.pool}
+                                                    onChange={(e) =>
+                                                        setServices((prev) => ({
+                                                            ...prev,
+                                                            pool: e.target
+                                                                .checked,
+                                                        }))
+                                                    }
                                                     className="p-2 block rounded-md border focus:outline-none border-gray-300 focus:border-blue-600 shadow-sm text-sm md:text-base hover:cursor-pointer"
                                                 />
                                                 Swimming Pool
@@ -415,9 +588,17 @@ const UpdatePropertyPage = () => {
                                         </div>
                                         <div className="col-span-1 flex items-center">
                                             <label className="flex gap-2 hover:cursor-pointer select-none text-sm md:text-base">
-                                                <Field
+                                                <input
                                                     type="checkbox"
                                                     name="services.gym"
+                                                    checked={services.gym}
+                                                    onChange={(e) =>
+                                                        setServices((prev) => ({
+                                                            ...prev,
+                                                            gym: e.target
+                                                                .checked,
+                                                        }))
+                                                    }
                                                     className="p-2 block rounded-md border focus:outline-none border-gray-300 focus:border-blue-600 shadow-sm text-sm md:text-base hover:cursor-pointer"
                                                 />
                                                 Fitness / Gym
@@ -425,9 +606,18 @@ const UpdatePropertyPage = () => {
                                         </div>
                                         <div className="col-span-1 flex items-center">
                                             <label className="flex gap-2 hover:cursor-pointer select-none text-sm md:text-base">
-                                                <Field
+                                                <input
                                                     type="checkbox"
                                                     name="services.parking"
+                                                    checked={services.parking}
+                                                    onChange={(e) =>
+                                                        setServices((prev) => ({
+                                                            ...prev,
+                                                            parking:
+                                                                e.target
+                                                                    .checked,
+                                                        }))
+                                                    }
                                                     className="p-2 block rounded-md border focus:outline-none border-gray-300 focus:border-blue-600 shadow-sm text-sm md:text-base hover:cursor-pointer"
                                                 />
                                                 Parking
@@ -435,9 +625,17 @@ const UpdatePropertyPage = () => {
                                         </div>
                                         <div className="col-span-1 flex items-center">
                                             <label className="flex gap-2 hover:cursor-pointer select-none text-sm md:text-base">
-                                                <Field
+                                                <input
                                                     type="checkbox"
                                                     name="services.garden"
+                                                    checked={services.garden}
+                                                    onChange={(e) =>
+                                                        setServices((prev) => ({
+                                                            ...prev,
+                                                            garden: e.target
+                                                                .checked,
+                                                        }))
+                                                    }
                                                     className="p-2 block rounded-md border focus:outline-none border-gray-300 focus:border-blue-600 shadow-sm text-sm md:text-base hover:cursor-pointer"
                                                 />
                                                 Garden
@@ -466,9 +664,16 @@ const UpdatePropertyPage = () => {
                                 <label className="block text-xs md:text-sm font-medium tracking-wide">
                                     Street address
                                 </label>
-                                <Field
+                                <input
                                     type="text"
                                     name="address.street"
+                                    value={address.street}
+                                    onChange={(e) =>
+                                        setAddress((prev) => ({
+                                            ...prev,
+                                            street: e.target.value,
+                                        }))
+                                    }
                                     className="mt-1 p-2 block w-full rounded-md border focus:outline-none border-gray-300 focus:border-blue-600 shadow-sm text-sm md:text-base"
                                 />
                             </div>
@@ -476,9 +681,16 @@ const UpdatePropertyPage = () => {
                                 <label className="block text-xs md:text-sm font-medium tracking-wide">
                                     Building, Apartment, etc. (optional)
                                 </label>
-                                <Field
+                                <input
                                     type="text"
                                     name="address.addressEtc"
+                                    value={address.addressEtc}
+                                    onChange={(e) =>
+                                        setAddress((prev) => ({
+                                            ...prev,
+                                            addressEtc: e.target.value,
+                                        }))
+                                    }
                                     className="mt-1 p-2 block w-full rounded-md border focus:outline-none border-gray-300 focus:border-blue-600 shadow-sm text-sm md:text-base"
                                 />
                             </div>
@@ -486,9 +698,16 @@ const UpdatePropertyPage = () => {
                                 <label className="block text-xs md:text-sm font-medium tracking-wide">
                                     District
                                 </label>
-                                <Field
+                                <input
                                     type="text"
                                     name="address.district"
+                                    value={address.district}
+                                    onChange={(e) =>
+                                        setAddress((prev) => ({
+                                            ...prev,
+                                            district: e.target.value,
+                                        }))
+                                    }
                                     className="mt-1 p-2 block w-full rounded-md border focus:outline-none border-gray-300 focus:border-blue-600 shadow-sm text-sm md:text-base"
                                 />
                             </div>
@@ -496,9 +715,16 @@ const UpdatePropertyPage = () => {
                                 <label className="block text-xs md:text-sm font-medium tracking-wide">
                                     State / Province
                                 </label>
-                                <Field
+                                <input
                                     type="text"
                                     name="address.province"
+                                    value={address.province}
+                                    onChange={(e) =>
+                                        setAddress((prev) => ({
+                                            ...prev,
+                                            province: e.target.value,
+                                        }))
+                                    }
                                     className="mt-1 p-2 block w-full rounded-md border focus:outline-none border-gray-300 focus:border-blue-600 shadow-sm text-sm md:text-base"
                                 />
                             </div>
@@ -506,9 +732,16 @@ const UpdatePropertyPage = () => {
                                 <label className="block text-xs md:text-sm font-medium tracking-wide">
                                     Zip / Postal code
                                 </label>
-                                <Field
+                                <input
                                     type="text"
                                     name="address.zip"
+                                    value={address.zip}
+                                    onChange={(e) =>
+                                        setAddress((prev) => ({
+                                            ...prev,
+                                            zip: e.target.value,
+                                        }))
+                                    }
                                     className="mt-1 p-2 block w-full rounded-md border focus:outline-none border-gray-300 focus:border-blue-600 shadow-sm text-sm md:text-base"
                                 />
                             </div>
@@ -521,7 +754,7 @@ const UpdatePropertyPage = () => {
                                 <label className="block text-xs md:text-sm font-medium tracking-wide">
                                     Latitude
                                 </label>
-                                <Field
+                                <input
                                     type="text"
                                     name="coordinate.lat"
                                     className="mt-1 p-2 block w-full rounded-md border focus:outline-none border-gray-300 focus:border-blue-600 shadow-sm text-sm md:text-base"
@@ -531,7 +764,7 @@ const UpdatePropertyPage = () => {
                                 <label className="block text-xs md:text-sm font-medium tracking-wide">
                                     Longitude
                                 </label>
-                                <Field
+                                <input
                                     type="text"
                                     name="coordinate.lng"
                                     className="mt-1 p-2 block w-full rounded-md border focus:outline-none border-gray-300 focus:border-blue-600 shadow-sm text-sm md:text-base"
@@ -554,28 +787,29 @@ const UpdatePropertyPage = () => {
                             <hr className="col-span-12" />
 
                             <div className="col-span-12">
-                                {imagesPreview.length > 0 && (
-                                    <div className="grid grid-cols-6 gap-4 p-4 border rounded-lg overflow-hidden">
+                                {imagesPreview?.length > 0 && (
+                                    <div className="grid grid-cols-3 md:grid-cols-6 gap-4 p-4 border rounded-lg overflow-hidden">
                                         {imagesPreview?.map((image, i) => (
                                             <div
                                                 key={i}
                                                 className="w-full aspect-square relative flex items-center rounded-lg overflow-hidden"
                                             >
                                                 <Image
-                                                    alt={image}
-                                                    src={image}
+                                                    alt={"preview_image"}
+                                                    src={
+                                                        image.url
+                                                            ? image.url
+                                                            : image
+                                                    }
                                                     draggable="false"
                                                     fill
                                                     className="select-none object-cover"
                                                 />
                                                 <div className="flex absolute top-1 right-1 z-[1]">
                                                     <button
-                                                        // onClick={() =>
-                                                        //     removeImage(
-                                                        //         i,
-                                                        //         formik
-                                                        //     )
-                                                        // }
+                                                        onClick={() =>
+                                                            removeImage(i)
+                                                        }
                                                         className="bg-white text-red-600 transition-all border border-transparent hover:border-red-600 rounded-lg p-1"
                                                     >
                                                         <svg
@@ -583,7 +817,7 @@ const UpdatePropertyPage = () => {
                                                             fill="none"
                                                             viewBox="0 0 24 24"
                                                             stroke="currentColor"
-                                                            className="w-5 h-5"
+                                                            className="w-4 md:w-5 h-4 md:h-5"
                                                         >
                                                             <path
                                                                 strokeLinecap="round"
@@ -598,39 +832,13 @@ const UpdatePropertyPage = () => {
                                         ))}
                                     </div>
                                 )}
+
                                 <div className="col-span-12">
                                     <input
                                         type="file"
                                         accept="image/*"
                                         multiple
-                                        // onChange={(e) => {
-                                        //     const files = Array.from(
-                                        //         e.target.files
-                                        //     );
-
-                                        //     files.forEach((file, idx) => {
-                                        //         const reader = new FileReader();
-                                        //         console.log(idx + 1);
-
-                                        //         reader.onload = () => {
-                                        //             if (
-                                        //                 reader.readyState === 2
-                                        //             ) {
-                                        //                 setImagesPreview(
-                                        //                     (old) => [
-                                        //                         ...old,
-                                        //                         reader.result,
-                                        //                     ]
-                                        //                 );
-                                        //                 formik.values.images?.push(
-                                        //                     reader.result
-                                        //                     // file.name
-                                        //                 );
-                                        //             }
-                                        //         };
-                                        //         reader.readAsDataURL(file);
-                                        //     });
-                                        // }}
+                                        onChange={updateProductImagesChange}
                                         className="mt-1 p-2 block w-full rounded-md border focus:outline-none border-gray-300 focus:border-blue-600 shadow-sm text-sm md:text-base"
                                     />
                                 </div>
@@ -640,7 +848,8 @@ const UpdatePropertyPage = () => {
 
                             <div className="col-span-12 flex items-center justify-end gap-x-4">
                                 <button
-                                    type="submit"
+                                    type="button"
+                                    onClick={submitForm}
                                     className="inline-flex items-center bg-primary rounded-md transition-all overflow-hidden"
                                 >
                                     <div className="w-full h-full inline-flex items-center justify-center font-medium text-white hover:backdrop-brightness-95 py-2 px-4">

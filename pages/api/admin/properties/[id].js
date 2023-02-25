@@ -1,10 +1,15 @@
 import dbConnect from "@/lib/db-connect";
-import {
-    authorizeRoles,
-    isAuthenticatedUser,
-} from "@/middlewares/auth";
+import { authorizeRoles, isAuthenticatedUser } from "@/middlewares/auth";
 import Property from "@/models/property";
 import cloudinary from "@/lib/cloudinary";
+
+export const config = {
+    api: {
+        bodyParser: {
+            sizeLimit: "10mb",
+        },
+    },
+};
 
 const handler = async (req, res) => {
     await dbConnect();
@@ -33,39 +38,47 @@ const handler = async (req, res) => {
                     });
                 }
 
-                // Images
-                let images = [];
+                // Images Array
+                const oldImages = property.images || [];
+                const newImages = req.body.images || [];
+                const updateImages = [];
 
-                if (typeof req.body.images === "string") {
-                    images.push(req.body.images);
-                } else {
-                    images = req.body.images;
-                }
+                if (newImages !== undefined) {
+                    const unmatchedImages = oldImages.filter(
+                        (img) =>
+                            !newImages.some(
+                                (image) => image.public_id === img.public_id
+                            )
+                    );
 
-                if (images !== undefined) {
                     // Deleting Images From Cloudinary
-                    for (let i = 0; i < property.images.length; i++) {
+                    for (let i = 0; i < unmatchedImages.length; i++) {
                         await cloudinary.uploader.destroy(
-                            property.images[i].public_id
+                            unmatchedImages[i].public_id
                         );
                     }
 
-                    const imagesLinks = [];
+                    for (let i = 0; i < newImages.length; i++) {
+                        if (typeof newImages[i] === "string") {
+                            const result = await cloudinary.uploader.upload(
+                                newImages[i],
+                                {
+                                    folder: "properties",
+                                }
+                            );
 
-                    for (let i = 0; i < images.length; i++) {
-                        const result = await cloudinary.uploader.upload(
-                            images[i],
-                            {
-                                folder: "properties",
-                            }
-                        );
-
-                        imagesLinks.push({
-                            public_id: result.public_id,
-                            url: result.secure_url,
-                        });
+                            updateImages.push({
+                                public_id: result.public_id,
+                                url: result.secure_url,
+                            });
+                        } else {
+                            updateImages.push({
+                                public_id: newImages[i].public_id,
+                                url: newImages[i].url,
+                            });
+                        }
                     }
-                    req.body.images = imagesLinks;
+                    req.body.images = updateImages;
                 }
 
                 property = await Property.findByIdAndUpdate(
@@ -80,7 +93,7 @@ const handler = async (req, res) => {
 
                 res.status(200).json({ success: true, property });
             } catch (error) {
-                res.status(400).json({
+                res.status(500).json({
                     success: false,
                     message: error.message,
                 });

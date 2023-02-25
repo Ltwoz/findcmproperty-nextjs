@@ -10,7 +10,7 @@ const ListPropertyCard = ({ property }) => {
                     <Image
                         alt="property-image"
                         src={
-                            property.images[0].url ||
+                            property.images[0]?.url ||
                             `https://dummyimage.com/261x261`
                         }
                         draggable="false"

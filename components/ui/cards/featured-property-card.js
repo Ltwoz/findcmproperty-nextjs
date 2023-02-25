@@ -9,7 +9,7 @@ const FeaturedPropertyCard = ({ property }) => {
                     <div className="absolute z-[1] right-0 bottom-0 left-0 w-full h-[50%] overflow-hidden bg-gradient-to-t from-black/70 to-white/0 opacity-100" />
                     <Image
                         alt="property-image"
-                        src={property.images[0].url || `https://dummyimage.com/261x261`}
+                        src={property.images[0]?.url || `https://dummyimage.com/261x261`}
                         draggable="false"
                         fill
                         className="select-none object-cover"
