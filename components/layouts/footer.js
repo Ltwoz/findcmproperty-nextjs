@@ -1,10 +1,10 @@
 import Link from "next/link";
 import { FaFacebookF } from "react-icons/fa";
-import Image from "next/image";
+import { HiOutlineMail } from "react-icons/hi";
 
 const Footer = () => {
     return (
-        <footer className="py-3 w-full border-t backdrop-blur-sm z-50 bg-gray-100/80">
+        <footer className="py-3 w-full border-t backdrop-blur-sm z-50 bg-white">
             <div className="max-w-[1150px] px-4 sm:px-6 mx-auto gap-y-2 flex flex-col md:flex-row justify-between items-center">
                 <div className="text-sm md:text-base text-black/60">
                     © 2023 Find CM Property, All rights reserved.
@@ -34,6 +34,15 @@ const Footer = () => {
                         hover:bg-primary hover:bg-opacity-10 hover:border-primary active:scale-95"
                     >
                         <FaFacebookF />
+                    </Link>
+                    <Link
+                        href="mailto:Findcmproperty@gmail.com"
+                        name="email"
+                        className="inline-block p-2 font-medium text-sm md:text-base leading-tight rounded-full border border-gray-400/80 
+                        transition duration-150 ease-in-out 
+                        hover:bg-primary hover:bg-opacity-10 hover:border-primary active:scale-95"
+                    >
+                        <HiOutlineMail />
                     </Link>
                 </div>
             </div>

@@ -31,7 +31,7 @@ const FilterForm = ({ setLink }) => {
     // Debounce
     useEffect(() => {
         const debounce = setTimeout(() => {
-            const newLink = `/api/properties?keyword=${keyword}${
+            const newLink = `/api/properties?isActive=true&keyword=${keyword}${
                 location && `&location=${location}`
             }${status && `&type=${status}`}${
                 type.value && `&category=${type.value}`

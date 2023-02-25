@@ -16,7 +16,7 @@ const PropertiesPage = () => {
     const [loading, setLoading] = useState(true);
 
     const [link, setLink] = useState(
-        `/api/properties${status ? `?type=${status}` : ""}`
+        `/api/properties?isActive=true${status ? `&type=${status}` : ""}`
     );
 
     useEffect(() => {

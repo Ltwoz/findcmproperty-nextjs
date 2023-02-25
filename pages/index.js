@@ -13,7 +13,9 @@ export default function Home() {
 
     useEffect(() => {
         const getFeaturedProperties = async () => {
-            const { data } = await axios.get(`/api/properties?isFeatured=true`);
+            const { data } = await axios.get(
+                `/api/properties?isFeatured=true&isActive=true`
+            );
             setProperties(data?.properties);
             setLoading(false);
         };
@@ -26,15 +28,17 @@ export default function Home() {
 
     return (
         <Layout>
-            <div className="w-full h-full py-[220px] relative flex items-center">
-                <div className="absolute z-[1] right-0 bottom-0 left-0 w-full h-full overflow-hidden bg-black/40" />
+            <div className="fixed inset-0 w-full h-full z-[-1]">
                 <Image
                     alt="property-image"
                     src={`/housing.jpg`}
                     draggable="false"
                     fill
-                    className="select-none object-cover"
+                    className="absolute select-none object-cover z-[-1]"
                 />
+            </div>
+            <div className="w-full h-full py-[220px] relative flex items-center">
+                <div className="absolute z-[1] inset-0 w-full h-full overflow-hidden bg-black/40" />
                 <div className="container z-[2]">
                     <div className="flex flex-col justify-center items-center gap-4 text-white">
                         <h1 className="text-5xl font-bold">
@@ -106,7 +110,7 @@ export default function Home() {
 
             <section
                 id="why-choose-us"
-                className="flex justify-center items-center"
+                className="flex justify-center items-center bg-white"
             >
                 <div className="container">
                     <div className="flex flex-col justify-center items-center gap-y-2 my-10">

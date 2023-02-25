@@ -148,7 +148,7 @@ const UpdatePropertyPage = () => {
         if (isSuccess) {
             toast.add({
                 title: "Success!",
-                text: "Created new property.",
+                text: "Property updated.",
                 icon: "success",
             });
             setIsSuccess(false);
