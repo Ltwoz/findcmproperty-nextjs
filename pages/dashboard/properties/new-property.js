@@ -243,10 +243,11 @@ const NewPropertyPage = () => {
                                         <div className="col-span-2 md:col-span-1 flex flex-col gap-4 md:gap-6">
                                             <div>
                                                 <h3 className="text-base md:text-lg font-medium leading-6">
-                                                    Features
+                                                    Facilities
                                                 </h3>
                                                 <p className="mt-1 text-xs md:text-sm text-gray-600">
-                                                    Features for this property.
+                                                    Facilities for this
+                                                    property.
                                                 </p>
                                             </div>
                                             <hr className="col-span-12" />
@@ -316,10 +317,10 @@ const NewPropertyPage = () => {
                                         <div className="col-span-2 md:col-span-1 flex flex-col gap-4 md:gap-6">
                                             <div>
                                                 <h3 className="text-base md:text-lg font-medium leading-6">
-                                                    Community Features
+                                                    Conveniences
                                                 </h3>
                                                 <p className="mt-1 text-xs md:text-sm text-gray-600">
-                                                    Community Features for this
+                                                    Conveniences for this
                                                     property.
                                                 </p>
                                             </div>
@@ -392,7 +393,7 @@ const NewPropertyPage = () => {
                                                             name="services.garden"
                                                             className="p-2 block rounded-md border focus:outline-none border-gray-300 focus:border-blue-600 shadow-sm text-sm md:text-base hover:cursor-pointer"
                                                         />
-                                                        Garden
+                                                        Garden / Yard
                                                     </label>
                                                 </div>
                                             </div>
@@ -415,53 +416,13 @@ const NewPropertyPage = () => {
 
                                     <hr className="col-span-12" />
 
-                                    <div className="col-span-12 md:col-span-6">
+                                    <div className="col-span-12">
                                         <label className="block text-xs md:text-sm font-medium tracking-wide">
-                                            Street address
+                                            Address
                                         </label>
                                         <Field
                                             type="text"
-                                            name="address.street"
-                                            className="mt-1 p-2 block w-full rounded-md border focus:outline-none border-gray-300 focus:border-blue-600 shadow-sm text-sm md:text-base"
-                                        />
-                                    </div>
-                                    <div className="col-span-12 md:col-span-6">
-                                        <label className="block text-xs md:text-sm font-medium tracking-wide">
-                                            Building, Apartment, etc. (optional)
-                                        </label>
-                                        <Field
-                                            type="text"
-                                            name="address.addressEtc"
-                                            className="mt-1 p-2 block w-full rounded-md border focus:outline-none border-gray-300 focus:border-blue-600 shadow-sm text-sm md:text-base"
-                                        />
-                                    </div>
-                                    <div className="col-span-12 md:col-span-4">
-                                        <label className="block text-xs md:text-sm font-medium tracking-wide">
-                                            District
-                                        </label>
-                                        <Field
-                                            type="text"
-                                            name="address.district"
-                                            className="mt-1 p-2 block w-full rounded-md border focus:outline-none border-gray-300 focus:border-blue-600 shadow-sm text-sm md:text-base"
-                                        />
-                                    </div>
-                                    <div className="col-span-12 md:col-span-4">
-                                        <label className="block text-xs md:text-sm font-medium tracking-wide">
-                                            State / Province
-                                        </label>
-                                        <Field
-                                            type="text"
-                                            name="address.province"
-                                            className="mt-1 p-2 block w-full rounded-md border focus:outline-none border-gray-300 focus:border-blue-600 shadow-sm text-sm md:text-base"
-                                        />
-                                    </div>
-                                    <div className="col-span-12 md:col-span-4">
-                                        <label className="block text-xs md:text-sm font-medium tracking-wide">
-                                            Zip / Postal code
-                                        </label>
-                                        <Field
-                                            type="text"
-                                            name="address.zip"
+                                            name="address"
                                             className="mt-1 p-2 block w-full rounded-md border focus:outline-none border-gray-300 focus:border-blue-600 shadow-sm text-sm md:text-base"
                                         />
                                     </div>
@@ -613,7 +574,8 @@ const NewPropertyPage = () => {
                                                 Active
                                             </h4>
                                             <p className="mt-1 text-xs md:text-sm text-gray-600">
-                                                Turn this off will hide this porperty from user.
+                                                Turn this off will hide this
+                                                porperty from user.
                                             </p>
                                         </div>
                                         <label className="inline-flex relative items-center">
@@ -644,7 +606,8 @@ const NewPropertyPage = () => {
                                                 Featured property
                                             </h4>
                                             <p className="mt-1 text-xs md:text-sm text-gray-600">
-                                                Turn on will show this property in the homepage.
+                                                Turn on will show this property
+                                                in the homepage.
                                             </p>
                                         </div>
                                         <label className="inline-flex relative items-center">
@@ -652,14 +615,17 @@ const NewPropertyPage = () => {
                                                 type="checkbox"
                                                 name="isFeatured"
                                                 className="sr-only peer"
-                                                checked={formik.values.isFeatured}
+                                                checked={
+                                                    formik.values.isFeatured
+                                                }
                                                 readOnly
                                             />
                                             <div
                                                 onClick={() => {
                                                     formik.setFieldValue(
                                                         "isFeatured",
-                                                        !formik.values.isFeatured
+                                                        !formik.values
+                                                            .isFeatured
                                                     );
                                                 }}
                                                 className="w-11 h-6 cursor-pointer bg-gray-300 rounded-full peer peer-focus:ring-green-300 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"

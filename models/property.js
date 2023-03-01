@@ -33,25 +33,8 @@ const PropertySchema = new mongoose.Schema({
         default: false,
     },
     address: {
-        street: {
-            type: String,
-            required: true,
-        },
-        addressEtc: {
-            type: String,
-        },
-        district: {
-            type: String,
-            required: true,
-        },
-        province: {
-            type: String,
-            required: true,
-        },
-        zip: {
-            type: String,
-            required: true,
-        },
+        type: String,
+        required: true,
     },
     coordinate: {
         lat: { type: String },
@@ -60,7 +43,7 @@ const PropertySchema = new mongoose.Schema({
     details: {
         areaSqM: {
             type: Number,
-            required: true,
+            default: 0
         },
         beds: {
             type: Number,

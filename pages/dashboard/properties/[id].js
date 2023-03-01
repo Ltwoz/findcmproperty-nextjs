@@ -37,18 +37,12 @@ const UpdatePropertyPage = () => {
     const [price, setPrice] = useState("");
     const [type, setType] = useState({});
     const [category, setCategory] = useState({});
+    const [address, setAddress] = useState("");
 
     const [details, setDetails] = useState({
         areaSqM: "",
         beds: "",
         baths: "",
-    });
-    const [address, setAddress] = useState({
-        street: "",
-        addressEtc: "",
-        district: "",
-        province: "",
-        zip: "",
     });
     const [features, setFeatures] = useState({
         ac: "",
@@ -105,13 +99,7 @@ const UpdatePropertyPage = () => {
             beds: property.details?.beds,
             baths: property.details?.baths,
         });
-        setAddress({
-            street: property.address?.street,
-            addressEtc: property.address?.addressEtc,
-            district: property.address?.district,
-            province: property.address?.province,
-            zip: property.address?.zip,
-        });
+        setAddress(property.address);
         setFeatures({
             ac: property.features?.ac,
             balcony: property.features?.balcony,
@@ -176,7 +164,7 @@ const UpdatePropertyPage = () => {
                     services,
                     images,
                     isActive,
-                    isFeatured
+                    isFeatured,
                 },
                 config
             );
@@ -396,10 +384,10 @@ const UpdatePropertyPage = () => {
                                 <div className="col-span-2 md:col-span-1 flex flex-col gap-4 md:gap-6">
                                     <div>
                                         <h3 className="text-base md:text-lg font-medium leading-6">
-                                            Features
+                                            Facilities
                                         </h3>
                                         <p className="mt-1 text-xs md:text-sm text-gray-600">
-                                            Features for this property.
+                                            Facilities for this property.
                                         </p>
                                     </div>
                                     <hr className="col-span-12" />
@@ -520,11 +508,10 @@ const UpdatePropertyPage = () => {
                                 <div className="col-span-2 md:col-span-1 flex flex-col gap-4 md:gap-6">
                                     <div>
                                         <h3 className="text-base md:text-lg font-medium leading-6">
-                                            Community Features
+                                            Conveniences
                                         </h3>
                                         <p className="mt-1 text-xs md:text-sm text-gray-600">
-                                            Community Features for this
-                                            property.
+                                            Conveniences for this property.
                                         </p>
                                     </div>
                                     <hr className="col-span-12" />
@@ -655,7 +642,7 @@ const UpdatePropertyPage = () => {
                                                     }
                                                     className="p-2 block rounded-md border focus:outline-none border-gray-300 focus:border-blue-600 shadow-sm text-sm md:text-base hover:cursor-pointer"
                                                 />
-                                                Garden
+                                                Garden / Yard
                                             </label>
                                         </div>
                                     </div>
@@ -677,88 +664,15 @@ const UpdatePropertyPage = () => {
 
                             <hr className="col-span-12" />
 
-                            <div className="col-span-12 md:col-span-6">
+                            <div className="col-span-12">
                                 <label className="block text-xs md:text-sm font-medium tracking-wide">
-                                    Street address
+                                    Address
                                 </label>
                                 <input
                                     type="text"
-                                    name="address.street"
-                                    value={address.street}
-                                    onChange={(e) =>
-                                        setAddress((prev) => ({
-                                            ...prev,
-                                            street: e.target.value,
-                                        }))
-                                    }
-                                    className="mt-1 p-2 block w-full rounded-md border focus:outline-none border-gray-300 focus:border-blue-600 shadow-sm text-sm md:text-base"
-                                />
-                            </div>
-                            <div className="col-span-12 md:col-span-6">
-                                <label className="block text-xs md:text-sm font-medium tracking-wide">
-                                    Building, Apartment, etc. (optional)
-                                </label>
-                                <input
-                                    type="text"
-                                    name="address.addressEtc"
-                                    value={address.addressEtc}
-                                    onChange={(e) =>
-                                        setAddress((prev) => ({
-                                            ...prev,
-                                            addressEtc: e.target.value,
-                                        }))
-                                    }
-                                    className="mt-1 p-2 block w-full rounded-md border focus:outline-none border-gray-300 focus:border-blue-600 shadow-sm text-sm md:text-base"
-                                />
-                            </div>
-                            <div className="col-span-12 md:col-span-4">
-                                <label className="block text-xs md:text-sm font-medium tracking-wide">
-                                    District
-                                </label>
-                                <input
-                                    type="text"
-                                    name="address.district"
-                                    value={address.district}
-                                    onChange={(e) =>
-                                        setAddress((prev) => ({
-                                            ...prev,
-                                            district: e.target.value,
-                                        }))
-                                    }
-                                    className="mt-1 p-2 block w-full rounded-md border focus:outline-none border-gray-300 focus:border-blue-600 shadow-sm text-sm md:text-base"
-                                />
-                            </div>
-                            <div className="col-span-12 md:col-span-4">
-                                <label className="block text-xs md:text-sm font-medium tracking-wide">
-                                    State / Province
-                                </label>
-                                <input
-                                    type="text"
-                                    name="address.province"
-                                    value={address.province}
-                                    onChange={(e) =>
-                                        setAddress((prev) => ({
-                                            ...prev,
-                                            province: e.target.value,
-                                        }))
-                                    }
-                                    className="mt-1 p-2 block w-full rounded-md border focus:outline-none border-gray-300 focus:border-blue-600 shadow-sm text-sm md:text-base"
-                                />
-                            </div>
-                            <div className="col-span-12 md:col-span-4">
-                                <label className="block text-xs md:text-sm font-medium tracking-wide">
-                                    Zip / Postal code
-                                </label>
-                                <input
-                                    type="text"
-                                    name="address.zip"
-                                    value={address.zip}
-                                    onChange={(e) =>
-                                        setAddress((prev) => ({
-                                            ...prev,
-                                            zip: e.target.value,
-                                        }))
-                                    }
+                                    name="address"
+                                    value={address}
+                                    onChange={(e) => setAddress(e.target.value)}
                                     className="mt-1 p-2 block w-full rounded-md border focus:outline-none border-gray-300 focus:border-blue-600 shadow-sm text-sm md:text-base"
                                 />
                             </div>
