@@ -105,11 +105,7 @@ const PropertyDetails = ({ property }) => {
                                     <div className="flex items-center gap-2 mb-4">
                                         <FaMapMarkerAlt />
                                         <div className="text-lg">
-                                            {property.address.street}{" "}
-                                            {property.address.addressEtc}{" "}
-                                            {property.address.district}{" "}
-                                            {property.address.country}{" "}
-                                            {property.address.zip}
+                                            {property.address}
                                         </div>
                                     </div>
 

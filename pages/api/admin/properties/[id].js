@@ -130,11 +130,18 @@ const handler = async (req, res) => {
                     });
                 }
 
+                // Deleting Images From Cloudinary
+                const deletePromises = [];
+
                 for (let i = 0; i < property.images.length; i++) {
-                    await cloudinary.uploader.destroy(
-                        property.images[i].public_id
+                    deletePromises.push(
+                        cloudinary.uploader.destroy(
+                            property.images[i].public_id
+                        )
                     );
                 }
+
+                await Promise.all(deletePromises);
 
                 await property.remove();
 

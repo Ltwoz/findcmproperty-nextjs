@@ -155,7 +155,7 @@ const NewPropertyPage = () => {
                                         />
                                     </div>
                                     <div className="col-span-6 md:col-span-3">
-                                        <label className="block text-xs md:text-sm font-medium tracking-wide">
+                                        <label className="block text-xs md:text-sm font-medium tracking-wide mb-1">
                                             Type
                                         </label>
                                         <Select
@@ -173,7 +173,7 @@ const NewPropertyPage = () => {
                                         />
                                     </div>
                                     <div className="col-span-6 md:col-span-3">
-                                        <label className="block text-xs md:text-sm font-medium tracking-wide">
+                                        <label className="block text-xs md:text-sm font-medium tracking-wide mb-1">
                                             Category
                                         </label>
                                         <Select

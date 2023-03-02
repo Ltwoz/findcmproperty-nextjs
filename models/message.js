@@ -1,12 +1,23 @@
 import mongoose from "mongoose";
-import user from "./user";
 
 const MessageSchema = new mongoose.Schema(
     {
         name: {
             type: String,
-            required: [true, "Please Enter Property Name"],
+            required: true,
             trim: true,
+        },
+        email: {
+            type: String,
+            required: true
+        },
+        phone: {
+            type: String,
+            required: true
+        },
+        message: {
+            type: String,
+            required: true
         },
         user: {
             type: mongoose.Schema.Types.ObjectId,

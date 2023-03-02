@@ -2,8 +2,8 @@ import Link from "next/link";
 
 const DashboardNavbar = () => {
     return (
-        <div className="hidden md:block w-full py-3 border-b">
-            <div className="flex items-center max-w-[1150px] px-5 mx-auto divide-x gap-4 font-normal">
+        <div className="block w-full py-3 border-b overflow-x-scroll md:overflow-x-visible">
+            <div className="flex items-center justify-start w-fit md:w-full md:max-w-[1150px] px-5 mx-auto divide-x gap-4 font-normal">
                 <div className="flex flex-row gap-4">
                     <Link href={`/dashboard`} className="hover:text-primary">
                         Overview

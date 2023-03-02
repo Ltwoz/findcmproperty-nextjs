@@ -16,40 +16,28 @@ const Navbar = () => {
 
     const [showMenu, setShowMenu] = useState(false);
     const [openNav, setOpenNav] = useState(false);
-    const [openDashboardNav, setOpenDashboardNav] = useState(false);
 
     useEffect(() => {
         const menuHandler = () => setShowMenu(false);
         const navHandler = () => setOpenNav(false);
-        const dashboardHandler = () => setOpenDashboardNav(false);
 
         window.addEventListener("click", menuHandler);
         window.addEventListener("click", navHandler);
-        window.addEventListener("click", dashboardHandler);
 
         return () => {
             window.removeEventListener("click", menuHandler);
             window.removeEventListener("click", navHandler);
-            window.removeEventListener("click", dashboardHandler);
         };
     }, []);
 
     const handleMenuClick = (e) => {
         e.stopPropagation();
         setShowMenu(!showMenu);
-        setOpenDashboardNav(false);
     };
 
     const handleNavClick = (e) => {
         e.stopPropagation();
         setOpenNav(!openNav);
-        setShowMenu(false);
-        setOpenDashboardNav(false);
-    };
-
-    const handleDashboardNavClick = (e) => {
-        e.stopPropagation();
-        setOpenDashboardNav(!openDashboardNav);
         setShowMenu(false);
     };
 
@@ -90,35 +78,21 @@ const Navbar = () => {
             >
                 Rent
             </Link>
-            <Link scroll={false} href={`/contact`} className="py-2 hover:text-primary">
+            <Link
+                scroll={false}
+                href={`/contact`}
+                className="py-2 hover:text-primary"
+            >
                 Contact
             </Link>
             {user?.role === "admin" && (
-                <div
-                    className="flex items-center justify-between text-blue-700 md:hidden py-2"
-                    onClick={handleDashboardNavClick}
+                <Link
+                    scroll={false}
+                    href={`/dashboard`}
+                    className="py-2 hover:text-primary text-blue-700 md:hidden"
                 >
                     Dashboard
-                    <div className="inline-flex items-center">
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 24 24"
-                            className={
-                                "h-5 w-5 transition duration-200" +
-                                (openDashboardNav ? " -rotate-180" : "")
-                            }
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth={2}
-                        >
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M19.5 8.25l-7.5 7.5-7.5-7.5"
-                            />
-                        </svg>
-                    </div>
-                </div>
+                </Link>
             )}
         </div>
     );
@@ -244,8 +218,8 @@ const Navbar = () => {
         );
 
     return (
-        <nav className="fixed top-0 md:relative px-2 md:px-0 py-2 md:py-3 w-full md:border-b md:bg-white z-30">
-            <div className="block md:flex relative justify-between items-center max-w-[1150px] w-full border md:border-0 border-gray-300/50 rounded-lg md:rounded-none shadow-md md:shadow-none px-4 sm:px-5 py-3 md:py-0 mx-auto bg-gray-200/80 md:bg-transparent backdrop-blur-md md:backdrop-blur-none">
+        <nav className="relative px-2 md:px-0 py-2 md:py-3 w-full md:border-b bg-white z-30">
+            <div className="block md:flex relative justify-between items-center max-w-[1150px] w-full px-5 mx-auto">
                 <div className="flex items-center w-full md:w-auto">
                     <div className="flex items-center justify-between w-full md:w-auto gap-8">
                         <Link
@@ -325,9 +299,7 @@ const Navbar = () => {
                             },
                             mount: {
                                 height: `${
-                                    openDashboardNav
-                                        ? `514px`
-                                        : status === "unauthenticated"
+                                    status === "unauthenticated"
                                         ? `210px`
                                         : user?.role !== "admin"
                                         ? `204px`
@@ -343,30 +315,6 @@ const Navbar = () => {
                         }}
                     >
                         {navList}
-                        {user?.role === "admin" && (
-                            <motion.div
-                                className="pl-6"
-                                animate={openDashboardNav ? "mount" : "unmount"}
-                                initial="unmount"
-                                exit="unmount"
-                                variants={{
-                                    unmount: {
-                                        height: 0,
-                                        opacity: 0,
-                                        visibility: "hidden",
-                                        transition: { duration: 0.2 },
-                                    },
-                                    mount: {
-                                        height: `274px`,
-                                        opacity: 1,
-                                        visibility: "visible",
-                                        transition: { duration: 0.2 },
-                                    },
-                                }}
-                            >
-                                {/* <DashboardNavList /> */}
-                            </motion.div>
-                        )}
                         <div className="mt-2">{userAuthButton}</div>
                     </motion.div>
                 </AnimatePresence>
