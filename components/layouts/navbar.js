@@ -102,8 +102,8 @@ const Navbar = () => {
             <div className="md:flex text-left items-center">
                 <div className="flex items-center px-[1px]">
                     <div
-                        className={`w-full md:hover:cursor-pointer flex justify-between items-center rounded-md md:px-2 py-1 text-gray-700 md:ring-1 md:ring-transparent md:hover:ring-primary/50 md:hover:bg-primary/5 ${
-                            showMenu ? "md:ring-primary/50 md:bg-primary/5" : ""
+                        className={`w-full md:hover:cursor-pointer flex justify-between items-center rounded-md md:px-2 py-1 text-gray-700 md:ring-1 md:hover:ring-primary/50 md:hover:bg-primary/5 ${
+                            showMenu ? "md:ring-primary/50 md:bg-primary/5" : "md:ring-transparent"
                         } select-none transition-all`}
                         onClick={handleMenuClick}
                     >
@@ -156,14 +156,14 @@ const Navbar = () => {
                     <div className="py-1">
                         <Link
                             scroll={false}
-                            href={`/profile`}
+                            href={`#`}
                             className="text-gray-700 block px-4 py-2 text-sm hover:bg-primary/10"
                         >
                             Profile
                         </Link>
                         <Link
                             scroll={false}
-                            href={`/history/topups`}
+                            href={`#`}
                             className="text-gray-700 block px-4 py-2 text-sm hover:bg-primary/10"
                         >
                             Wishlist
