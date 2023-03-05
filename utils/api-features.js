@@ -35,7 +35,7 @@ export default class ApiFeatures {
     filter() {
         const queryCopy = { ...this.queryStr };
         //   Removing some fields for category
-        const removeFields = ["keyword", "page", "limit", "location", "sort"];
+        const removeFields = ["keyword", "page", "limit", "location", "sort", "findUser"];
 
         removeFields.forEach((key) => delete queryCopy[key]);
 
@@ -80,6 +80,30 @@ export default class ApiFeatures {
         }
 
         this.query = this.query.sort(sortVal);
+        return this;
+    }
+
+    findUser() {
+        const user = this.queryStr.findUser
+            ? {
+                  $or: [
+                      {
+                          username: {
+                              $regex: this.queryStr.findUser,
+                              $options: "i",
+                          },
+                      },
+                      {
+                          email: {
+                              $regex: this.queryStr.findUser,
+                              $options: "i",
+                          },
+                      },
+                  ],
+              }
+            : {};
+
+        this.query = this.query.find({ ...user });
         return this;
     }
 }

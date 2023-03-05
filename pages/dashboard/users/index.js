@@ -1,13 +1,26 @@
+import { useToast } from "@/components/contexts/toast-context";
 import DashboardNavbar from "@/components/layouts/dashboard-navbar";
 import Layout from "@/components/layouts/layout";
+import UpdateUserModal from "@/components/ui/modals/update-user-modal";
 import LoadingSpiner from "@/components/ui/spiner";
 import axios from "axios";
+import { AnimatePresence } from "framer-motion";
+import { useSession } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 
 const AdminUsersPage = () => {
+    const { data: session } = useSession();
+
+    // Modals State.
+    const [isUpdateModal, setIsUpdateModal] = useState(false);
+
+    // CRUD State.
     const [loading, setLoading] = useState(true);
+    const [isUpdated, setIsUpdated] = useState(false);
+    const [isDeleted, setIsDeleted] = useState(false);
+    const [error, setError] = useState(null);
 
     // Users State.
     const [users, setUsers] = useState({});
@@ -20,6 +33,8 @@ const AdminUsersPage = () => {
     // Pagination State.
     const [page, setPage] = useState(1);
 
+    const toast = useToast();
+
     // Debounce
     useEffect(() => {
         const debounce = setTimeout(() => {
@@ -31,11 +46,13 @@ const AdminUsersPage = () => {
 
     useEffect(() => {
         const getUsers = async () => {
-            let link = `/api/admin/users?id=${
+            let link = `/api/admin/users?findUser=${
                 search ? search : ""
             }&page=${page}`;
 
             const { data } = await axios.get(link);
+
+            console.log(data);
             setUsers(data);
             setLoading(false);
         };
@@ -44,13 +61,52 @@ const AdminUsersPage = () => {
             console.error;
             setLoading(false);
         });
-    }, [page, search]);
+    }, [page, search, isUpdated, isDeleted]);
+
+    useEffect(() => {
+        if (error) {
+            toast.add({
+                title: "Failed!",
+                text: error,
+                icon: "error",
+            });
+            setError(null);
+        }
+
+        if (isUpdated) {
+            toast.add({
+                title: "Success!",
+                text: "Updated user.",
+                icon: "success",
+            });
+            setIsUpdated(false);
+        }
+
+        if (isDeleted) {
+            toast.add({
+                title: "Success!",
+                text: "Deleted user.",
+                icon: "success",
+            });
+            setIsDeleted(false);
+        }
+    }, [error, isDeleted, isUpdated, toast]);
 
     return (
         <Layout>
             <Head>
-                <title>Properties Dashboard - Find CM Property</title>
+                <title>Users Dashboard - Find CM Property</title>
             </Head>
+            <AnimatePresence>
+                {isUpdateModal && (
+                    <UpdateUserModal
+                        user={selectedUser}
+                        setIsOpen={setIsUpdateModal}
+                        setIsUpdated={setIsUpdated}
+                        setError={setError}
+                    />
+                )}
+            </AnimatePresence>
             <DashboardNavbar />
             <section id="main" className="flex justify-center items-center">
                 <div className="container">
@@ -60,7 +116,7 @@ const AdminUsersPage = () => {
                         <section className="bg-white border rounded-md shadow mb-6">
                             <div className="p-6 flex items-center justify-between max-h-[88px]">
                                 <h2 className="hidden md:block text-lg font-semibold">
-                                    จัดการผู้ใช้
+                                    All Users
                                 </h2>
                                 <div className="relative w-full md:w-fit">
                                     <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
@@ -79,7 +135,7 @@ const AdminUsersPage = () => {
                                     </div>
                                     <input
                                         type="text"
-                                        placeholder="ค้นหาชื่อหรืออีเมลผู้ใช้"
+                                        placeholder="Search"
                                         autoComplete="off"
                                         value={debounceValue}
                                         onChange={(e) =>
@@ -90,9 +146,9 @@ const AdminUsersPage = () => {
                                 </div>
                             </div>
                             {users.users.length < 1 ? (
-                                <div className="flex items-center justify-center py-6">
+                                <div className="flex items-center justify-center py-6 border-t">
                                     <p className="font-medium text-gray-600">
-                                        ไม่มีข้อมูลผู้ใช้
+                                        No users data.
                                     </p>
                                 </div>
                             ) : (
@@ -102,16 +158,13 @@ const AdminUsersPage = () => {
                                             <thead>
                                                 <tr className="bg-gray-200 text-gray-600 text-sm leading-normal">
                                                     <th className="py-3 px-6 text-left w-40 md:w-44">
-                                                        ชื่อผู้ใช้
+                                                        Username
                                                     </th>
                                                     <th className="py-3 px-6 text-left w-60 md:w-64">
-                                                        อีเมล
-                                                    </th>
-                                                    <th className="py-3 px-6 text-left w-36">
-                                                        พอยต์
+                                                        Email
                                                     </th>
                                                     <th className="py-3 px-6 text-center w-36">
-                                                        ตำแหน่ง
+                                                        Role
                                                     </th>
                                                     <th className="py-3 px-6 text-center w-28">
                                                         <span className="hidden">
@@ -121,26 +174,16 @@ const AdminUsersPage = () => {
                                                 </tr>
                                             </thead>
                                             <tbody className="text-gray-600 text-sm md:text-base">
-                                                {users.users.map((user) => (
+                                                {users.users?.map((user) => (
                                                     <tr
                                                         key={user._id}
                                                         className="border-b border-gray-200 hover:bg-gray-100"
                                                     >
                                                         <td className="py-3 px-6 text-left">
-                                                            {user.username}
+                                                            {user.username} {session.user.id === user._id ? "(Me)" : ""}
                                                         </td>
                                                         <td className="py-3 px-6 text-left">
                                                             {user.email}
-                                                        </td>
-                                                        <td className="py-3 px-6 text-left">
-                                                            {new Intl.NumberFormat(
-                                                                "en-US",
-                                                                {
-                                                                    minimumFractionDigits: 2,
-                                                                }
-                                                            ).format(
-                                                                user?.point
-                                                            )}
                                                         </td>
                                                         <td className="py-3 px-6 text-center">
                                                             <span
@@ -151,7 +194,7 @@ const AdminUsersPage = () => {
                                                             "admin"
                                                                 ? "bg-amber-700 text-amber-200"
                                                                 : user?.role ===
-                                                                  "member"
+                                                                  "user"
                                                                 ? "bg-blue-800 text-blue-200"
                                                                 : ""
                                                         }`}
