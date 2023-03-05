@@ -7,6 +7,7 @@ import axios from "axios";
 import FeaturedPropertyCard from "@/components/ui/cards/featured-property-card";
 import Image from "next/image";
 import SearchBox from "@/components/ui/search-box";
+import Link from "next/link";
 
 export default function Home() {
     const [properties, setProperties] = useState([]);
@@ -59,10 +60,10 @@ export default function Home() {
                     className="flex justify-center items-center bg-gray-100"
                 >
                     <div className="container">
-                        <div className="flex flex-col justify-center items-center gap-y-2 my-10">
-                            <h2 className="text-3xl font-bold">
-                                Featured Properties
-                            </h2>
+                        <div className="flex flex-col items-start justify-center my-6">
+                            <h1 className="text-2xl font-semibold">
+                                Featured house for rent
+                            </h1>
                             <p className="text-base">
                                 Handpicked properties by our team.
                             </p>
@@ -115,8 +116,10 @@ export default function Home() {
                 className="flex justify-center items-center bg-white"
             >
                 <div className="container">
-                    <div className="flex flex-col justify-center items-center gap-y-2 my-10">
-                        <h2 className="text-3xl font-bold">Why Choose Us</h2>
+                    <div className="flex flex-col justify-center items-center gap-y-2 my-6">
+                        <h2 className="text-3xl font-bold">
+                            Why Find CM Property?
+                        </h2>
                         <p className="text-base">
                             We provide full service at every step.
                         </p>
@@ -159,7 +162,7 @@ export default function Home() {
                             </div>
                             <div className="flex flex-col items-center gap-y-2 mt-10">
                                 <h4 className="text-lg font-semibold">
-                                    Wide Renge Of Properties
+                                    Wide Range Of Properties
                                 </h4>
                                 <p className="text-sm">
                                     Discover a place you’ll love to live in.

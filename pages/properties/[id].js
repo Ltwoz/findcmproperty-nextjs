@@ -23,8 +23,13 @@ import { TbElevator } from "react-icons/tb";
 import { RiParkingBoxLine } from "react-icons/ri";
 import { GiTreeBranch } from "react-icons/gi";
 import Head from "next/head";
+import Link from "next/link";
+import { useSession } from "next-auth/react";
 
 const PropertyDetails = ({ property }) => {
+    const { data: session, status } = useSession();
+    const user = session?.user;
+
     return (
         <Layout>
             <Head>
@@ -67,24 +72,35 @@ const PropertyDetails = ({ property }) => {
                                 </Splide>
 
                                 <div id="property-title" className="mb-4">
-                                    <div className="flex gap-x-2 mb-4">
-                                        <div
-                                            className={
-                                                "py-1.5 px-2.5 leading-none text-sm text-white font-semibold rounded bg-[#38a169]/90"
-                                            }
-                                        >
-                                            {property.category}
+                                    <div className="flex mb-4 justify-between items-center">
+                                        <div className="flex gap-x-2">
+                                            <div
+                                                className={
+                                                    "py-1.5 px-2.5 leading-none text-sm text-white font-semibold rounded bg-[#38a169]/90"
+                                                }
+                                            >
+                                                {property.category}
+                                            </div>
+                                            <div
+                                                className={
+                                                    "py-1.5 px-2.5 leading-none text-sm text-white font-semibold rounded" +
+                                                    (property.type === "Rent"
+                                                        ? " bg-orange-500/90"
+                                                        : " bg-red-500/90")
+                                                }
+                                            >
+                                                {property.type}
+                                            </div>
                                         </div>
-                                        <div
-                                            className={
-                                                "py-1.5 px-2.5 leading-none text-sm text-white font-semibold rounded" +
-                                                (property.type === "Rent"
-                                                    ? " bg-orange-500/90"
-                                                    : " bg-red-500/90")
-                                            }
-                                        >
-                                            {property.type}
-                                        </div>
+                                        {user?.role === "admin" && (
+                                            <Link
+                                                scroll={false}
+                                                href={`/dashboard/properties/${property._id}`}
+                                                className="font-medium hover:text-primary"
+                                            >
+                                                Edit
+                                            </Link>
+                                        )}
                                     </div>
 
                                     <div className="flex flex-col-reverse md:flex-row justify-between items-start gap-4 mb-4">
@@ -382,14 +398,16 @@ const PropertyDetails = ({ property }) => {
                                     </div>
                                 </div>
 
-                                <div
-                                    id="map-location"
-                                    className="py-8 border-t"
-                                >
-                                    <h2 className="text-xl font-semibold mb-4">
-                                        Location
-                                    </h2>
-                                </div>
+                                {property.coordinate && (
+                                    <div
+                                        id="map-location"
+                                        className="py-8 border-t"
+                                    >
+                                        <h2 className="text-xl font-semibold mb-4">
+                                            Location
+                                        </h2>
+                                    </div>
+                                )}
                             </div>
                         </div>
                         <div className="md:col-span-1 mb-4 md:mb-0">
