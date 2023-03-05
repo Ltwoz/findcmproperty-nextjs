@@ -18,6 +18,20 @@ export default class ApiFeatures {
         return this;
     }
 
+    location() {
+        const location = this.queryStr.location
+            ? {
+                  address: {
+                      $regex: this.queryStr.location,
+                      $options: "i",
+                  },
+              }
+            : {};
+
+        this.query = this.query.find({ ...location });
+        return this;
+    }
+
     filter() {
         const queryCopy = { ...this.queryStr };
         //   Removing some fields for category
@@ -42,36 +56,6 @@ export default class ApiFeatures {
 
         this.query = this.query.limit(resultPerPage).skip(skip);
 
-        return this;
-    }
-
-    location() {
-        const location = this.queryStr.location
-            ? {
-                  $or: [
-                      {
-                          "address.street": {
-                              $regex: this.queryStr.location,
-                              $options: "i",
-                          },
-                      },
-                      {
-                          "address.city": {
-                              $regex: this.queryStr.location,
-                              $options: "i",
-                          },
-                      },
-                      {
-                          "address.province": {
-                              $regex: this.queryStr.location,
-                              $options: "i",
-                          },
-                      },
-                  ],
-              }
-            : {};
-
-        this.query = this.query.find({ ...location });
         return this;
     }
 

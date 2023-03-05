@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import FeaturedPropertyCard from "@/components/ui/cards/featured-property-card";
 import Image from "next/image";
+import SearchBox from "@/components/ui/search-box";
 
 export default function Home() {
     const [properties, setProperties] = useState([]);
@@ -37,10 +38,10 @@ export default function Home() {
                     className="absolute select-none object-cover z-[-1]"
                 />
             </div>
-            <div className="w-full h-full py-[220px] relative flex items-center">
+            <div className="w-full h-full py-[150px] relative flex items-center">
                 <div className="absolute z-[1] inset-0 w-full h-full overflow-hidden bg-black/40" />
-                <div className="container z-[2]">
-                    <div className="flex flex-col justify-center items-center gap-4 text-white">
+                <div className="w-full max-w-[850px] p-5 mx-auto items-center z-[2]">
+                    <div className="mb-10 flex flex-col justify-center items-center gap-4 text-white text-center">
                         <h1 className="text-5xl font-bold">
                             Discover your place to live
                         </h1>
@@ -48,6 +49,7 @@ export default function Home() {
                             Get started in few clicks.
                         </p>
                     </div>
+                    <SearchBox />
                 </div>
             </div>
 

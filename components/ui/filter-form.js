@@ -21,7 +21,9 @@ const FilterForm = ({ setLink }) => {
     const router = useRouter();
 
     const [keyword, setKeyword] = useState("");
-    const [location, setLocation] = useState("");
+    const [location, setLocation] = useState(
+        router.query.location ? router.query.location : ""
+    );
     const [status, setStatus] = useState(
         router.query.status ? router.query.status : ""
     );
@@ -65,7 +67,7 @@ const FilterForm = ({ setLink }) => {
             </div>
             <div className="col-span-3">
                 <Select
-                    placeholder="Property type"
+                    placeholder="Category"
                     options={typeOptions}
                     selected={type}
                     setSelected={setType}
