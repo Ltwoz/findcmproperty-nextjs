@@ -2,7 +2,7 @@ import Layout from "@/components/layouts/layout";
 import ContactForm from "@/components/ui/contact-form";
 import Head from "next/head";
 
-const DashboardPage = () => {
+const ContactPage = () => {
     return (
         <Layout>
             <Head>
@@ -97,4 +97,4 @@ const DashboardPage = () => {
     );
 };
 
-export default DashboardPage;
+export default ContactPage;

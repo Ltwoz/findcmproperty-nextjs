@@ -218,7 +218,7 @@ const Navbar = () => {
         );
 
     return (
-        <nav className="relative px-2 md:px-0 py-2 md:py-3 w-full md:border-b bg-white z-30">
+        <nav className="relative px-2 md:px-0 py-2 md:py-3 w-full border-b bg-white z-30">
             <div className="block md:flex relative justify-between items-center max-w-[1150px] w-full px-5 mx-auto">
                 <div className="flex items-center w-full md:w-auto">
                     <div className="flex items-center justify-between w-full md:w-auto gap-8">
