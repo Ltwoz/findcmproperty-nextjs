@@ -76,8 +76,8 @@ const SignUpPage = () => {
                 password: enteredPassword,
             });
             toast.add({
-                title: "สมัครสำเร็จ!",
-                text: "กำลังพาคุณเข้าสู่ระบบ",
+                title: "Success!",
+                text: "Signed up.",
                 icon: "success",
             });
             router.replace("/");
