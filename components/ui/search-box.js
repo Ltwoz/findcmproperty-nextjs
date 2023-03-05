@@ -28,7 +28,7 @@ const SearchBox = () => {
 
     return (
         <>
-            <div className="w-2/3 md:w-1/3 mx-auto grid grid-cols-2 space-x-2 rounded-lg p-1 bg-gray-200/80 backdrop-blur-sm mb-4">
+            <div className="w-2/3 md:w-1/3 mx-auto grid grid-cols-2 space-x-2 rounded-lg p-1 bg-white/80 backdrop-blur-sm mb-4">
                 <div>
                     <input
                         type="radio"
@@ -85,7 +85,7 @@ const SearchBox = () => {
                     placeholder="Search by location"
                     value={location}
                     onChange={(e) => setLocation(e.target.value)}
-                    className="pl-10 pr-24 p-3 block w-full rounded-md border focus:outline-none bg-gray-200/80 backdrop-blur-sm border-gray-300 focus:border-blue-600 shadow-sm text-base"
+                    className="pl-10 pr-24 p-3 block w-full rounded-md border focus:outline-none bg-white/80 backdrop-blur-sm border-gray-300 focus:border-blue-600 shadow-sm text-base"
                 />
                 <button
                     onClick={handleSearch}
