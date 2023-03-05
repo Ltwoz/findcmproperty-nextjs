@@ -24,6 +24,10 @@ const MessageSchema = new mongoose.Schema(
             ref: "User",
             required: true,
         },
+        readed: {
+            type: Boolean,
+            default: false
+        },
     },
     { timestamps: true }
 );

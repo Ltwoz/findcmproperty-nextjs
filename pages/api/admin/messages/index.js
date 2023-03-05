@@ -13,6 +13,7 @@ const handler = async (req, res) => {
 
                 const apiFeature = new ApiFeatures(Message.find(), req.query)
                     .filter()
+                    .findMessage();
 
                 let messages = await apiFeature.query;
 

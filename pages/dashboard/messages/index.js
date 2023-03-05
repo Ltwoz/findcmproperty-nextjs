@@ -10,20 +10,14 @@ import Head from "next/head";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 
-const AdminUsersPage = () => {
-    const { data: session } = useSession();
-
-    // Modals State.
-    const [isUpdateModal, setIsUpdateModal] = useState(false);
-
+const AdminMessagesPage = () => {
     // CRUD State.
     const [loading, setLoading] = useState(true);
-    const [isUpdated, setIsUpdated] = useState(false);
     const [isDeleted, setIsDeleted] = useState(false);
     const [error, setError] = useState(null);
 
     // Users State.
-    const [users, setUsers] = useState({});
+    const [data, setData] = useState({});
     const [selectedUser, setSelectedUser] = useState({});
 
     // Search State.
@@ -46,13 +40,14 @@ const AdminUsersPage = () => {
 
     useEffect(() => {
         const getUsers = async () => {
-            let link = `/api/admin/users?findUser=${
+            let link = `/api/admin/messages?page=${page}&message=${
                 search ? search : ""
-            }&page=${page}`;
+            }`;
 
             const { data } = await axios.get(link);
 
-            setUsers(data);
+            console.log(data);
+            setData(data);
             setLoading(false);
         };
 
@@ -60,7 +55,7 @@ const AdminUsersPage = () => {
             console.error;
             setLoading(false);
         });
-    }, [page, search, isUpdated, isDeleted]);
+    }, [page, search, isDeleted]);
 
     useEffect(() => {
         if (error) {
@@ -72,15 +67,6 @@ const AdminUsersPage = () => {
             setError(null);
         }
 
-        if (isUpdated) {
-            toast.add({
-                title: "Success!",
-                text: "Updated user.",
-                icon: "success",
-            });
-            setIsUpdated(false);
-        }
-
         if (isDeleted) {
             toast.add({
                 title: "Success!",
@@ -89,23 +75,26 @@ const AdminUsersPage = () => {
             });
             setIsDeleted(false);
         }
-    }, [error, isDeleted, isUpdated, toast]);
+    }, [error, isDeleted, toast]);
+
+    const deleteHandler = async (selectedMessage) => {
+        try {
+            const { data } = await axios.delete(
+                `/api/admin/messages/${selectedMessage._id}`
+            );
+
+            setIsDeleted(data.success);
+        } catch (error) {
+            setError(error.message);
+            console.error(error.message);
+        }
+    };
 
     return (
         <Layout>
             <Head>
                 <title>Users Dashboard - Find CM Property</title>
             </Head>
-            <AnimatePresence>
-                {isUpdateModal && (
-                    <UpdateUserModal
-                        user={selectedUser}
-                        setIsOpen={setIsUpdateModal}
-                        setIsUpdated={setIsUpdated}
-                        setError={setError}
-                    />
-                )}
-            </AnimatePresence>
             <DashboardNavbar />
             <section id="main" className="flex justify-center items-center">
                 <div className="container">
@@ -144,7 +133,7 @@ const AdminUsersPage = () => {
                                     />
                                 </div>
                             </div>
-                            {users.users.length < 1 ? (
+                            {data.messages.length < 1 ? (
                                 <div className="flex items-center justify-center py-6 border-t">
                                     <p className="font-medium text-gray-600">
                                         No users data.
@@ -157,13 +146,16 @@ const AdminUsersPage = () => {
                                             <thead>
                                                 <tr className="bg-gray-200 text-gray-600 text-sm leading-normal">
                                                     <th className="py-3 px-6 text-left w-40 md:w-44">
-                                                        Username
+                                                        Name
                                                     </th>
                                                     <th className="py-3 px-6 text-left w-60 md:w-64">
                                                         Email
                                                     </th>
-                                                    <th className="py-3 px-6 text-center w-36">
-                                                        Role
+                                                    <th className="py-3 px-6 text-left w-36">
+                                                        Phone
+                                                    </th>
+                                                    <th className="py-3 px-6 text-left w-60 md:w-64">
+                                                        Message
                                                     </th>
                                                     <th className="py-3 px-6 text-center w-28">
                                                         <span className="hidden">
@@ -173,74 +165,61 @@ const AdminUsersPage = () => {
                                                 </tr>
                                             </thead>
                                             <tbody className="text-gray-600 text-sm md:text-base">
-                                                {users.users?.map((user) => (
-                                                    <tr
-                                                        key={user._id}
-                                                        className="border-b border-gray-200 hover:bg-gray-100"
-                                                    >
-                                                        <td className="py-3 px-6 text-left">
-                                                            {user.username} {session?.user.id === user._id ? "(Me)" : ""}
-                                                        </td>
-                                                        <td className="py-3 px-6 text-left">
-                                                            {user.email}
-                                                        </td>
-                                                        <td className="py-3 px-6 text-center">
-                                                            <span
-                                                                // className="bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded-full dark:bg-blue-900 dark:text-blue-300"
-                                                                className={`text-sm font-medium px-2.5 py-0.5 rounded-full
-                                                        ${
-                                                            user?.role ===
-                                                            "admin"
-                                                                ? "bg-amber-700 text-amber-200"
-                                                                : user?.role ===
-                                                                  "user"
-                                                                ? "bg-blue-800 text-blue-200"
-                                                                : ""
-                                                        }`}
-                                                            >
-                                                                {user.role}
-                                                            </span>
-                                                        </td>
-                                                        <td className="py-3 px-6 text-center">
-                                                            <div className="flex item-center justify-end gap-x-2">
-                                                                <div
-                                                                    onClick={() => {
-                                                                        setSelectedUser(
-                                                                            user
-                                                                        );
-                                                                        setIsUpdateModal(
-                                                                            (
-                                                                                prevState
-                                                                            ) =>
-                                                                                !prevState
-                                                                        );
-                                                                    }}
-                                                                    className="transform hover:text-primary hover:border-primary hover:scale-110 transition-all border rounded-full p-2 hover:cursor-pointer"
-                                                                >
-                                                                    <svg
-                                                                        xmlns="http://www.w3.org/2000/svg"
-                                                                        fill="none"
-                                                                        viewBox="0 0 24 24"
-                                                                        stroke="currentColor"
-                                                                        className="w-5 h-5"
+                                                {data.messages?.map(
+                                                    (message) => (
+                                                        <tr
+                                                            key={message._id}
+                                                            className="border-b border-gray-200 hover:bg-gray-100"
+                                                        >
+                                                            <td className="py-3 px-6 text-left">
+                                                                {message.name}
+                                                            </td>
+                                                            <td className="py-3 px-6 text-left">
+                                                                {message.email}
+                                                            </td>
+                                                            <td className="py-3 px-6 text-left">
+                                                                {message.phone}
+                                                            </td>
+                                                            <td className="py-3 px-6 text-left">
+                                                                {
+                                                                    message.message
+                                                                }
+                                                            </td>
+                                                            <td className="py-3 px-6 text-center">
+                                                                <div className="flex item-center justify-end gap-x-2">
+                                                                    <button
+                                                                        onClick={() =>
+                                                                            deleteHandler(
+                                                                                message
+                                                                            )
+                                                                        }
+                                                                        className="transform text-red-600 hover:scale-110 transition-all border hover:border-red-600 rounded-full p-2"
                                                                     >
-                                                                        <path
-                                                                            strokeLinecap="round"
-                                                                            strokeLinejoin="round"
-                                                                            strokeWidth="2"
-                                                                            d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
-                                                                        />
-                                                                    </svg>
+                                                                        <svg
+                                                                            xmlns="http://www.w3.org/2000/svg"
+                                                                            fill="none"
+                                                                            viewBox="0 0 24 24"
+                                                                            stroke="currentColor"
+                                                                            className="w-5 h-5"
+                                                                        >
+                                                                            <path
+                                                                                strokeLinecap="round"
+                                                                                strokeLinejoin="round"
+                                                                                strokeWidth="2"
+                                                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                                                            />
+                                                                        </svg>
+                                                                    </button>
                                                                 </div>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                ))}
+                                                            </td>
+                                                        </tr>
+                                                    )
+                                                )}
                                             </tbody>
                                         </table>
                                     </div>
                                     {!(
-                                        page === 0 || users.totalPageCount < 2
+                                        page === 0 || data.totalPageCount < 2
                                     ) && (
                                         <div
                                             id="pagination"
@@ -265,4 +244,4 @@ const AdminUsersPage = () => {
     );
 };
 
-export default AdminUsersPage;
+export default AdminMessagesPage;

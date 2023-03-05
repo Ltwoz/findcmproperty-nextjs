@@ -35,7 +35,15 @@ export default class ApiFeatures {
     filter() {
         const queryCopy = { ...this.queryStr };
         //   Removing some fields for category
-        const removeFields = ["keyword", "page", "limit", "location", "sort", "findUser"];
+        const removeFields = [
+            "keyword",
+            "page",
+            "limit",
+            "location",
+            "sort",
+            "findUser",
+            "message"
+        ];
 
         removeFields.forEach((key) => delete queryCopy[key]);
 
@@ -104,6 +112,20 @@ export default class ApiFeatures {
             : {};
 
         this.query = this.query.find({ ...user });
+        return this;
+    }
+
+    findMessage() {
+        const message = this.queryStr.message
+            ? {
+                  message: {
+                      $regex: this.queryStr.message,
+                      $options: "i",
+                  },
+              }
+            : {};
+
+        this.query = this.query.find({ ...message });
         return this;
     }
 }
