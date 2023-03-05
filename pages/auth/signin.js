@@ -27,18 +27,19 @@ const SignInPage = () => {
             username: enteredUsername,
             password: enteredPassword,
         });
+        console.log(result);
 
         if (result.ok) {
             toast.add({
-                title: "สำเร็จ!",
-                text: "กำลังพาคุณเข้าสู่ระบบ",
+                title: "Success!",
+                text: "Signing in",
                 icon: "success",
             });
             router.replace("/");
         } else {
             toast.add({
-                title: "ผิดพลาด!",
-                text: error,
+                title: "Failed!",
+                text: result.error,
                 icon: "error",
             });
         }

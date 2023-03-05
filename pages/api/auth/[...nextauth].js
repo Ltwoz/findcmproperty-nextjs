@@ -16,7 +16,7 @@ export const authOptions = (req) => {
                         const { username, password } = credentials;
 
                         if (!username || !password) {
-                            throw new Error("Invalid.");
+                            throw new Error("Invalid input.");
                         }
 
                         const user = await User.findOne({ username }).select(
@@ -25,7 +25,7 @@ export const authOptions = (req) => {
 
                         if (!user) {
                             throw new Error(
-                                "No user with a matching email was found."
+                                "No user with a matching username was found."
                             );
                         }
 
@@ -49,9 +49,7 @@ export const authOptions = (req) => {
                             },
                         };
                     } catch (error) {
-                        throw new Error(
-                            "Next Auth - Authorize: Authentication error"
-                        );
+                        throw new Error(error);
                     }
                 },
             }),
