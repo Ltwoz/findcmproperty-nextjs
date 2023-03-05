@@ -118,7 +118,7 @@ export default function Home() {
                 <div className="container">
                     <div className="flex flex-col justify-center items-center gap-y-2 my-6">
                         <h2 className="text-3xl font-bold">
-                            Why Find CM Property?
+                            Why Choose Us
                         </h2>
                         <p className="text-base">
                             We provide full service at every step.
