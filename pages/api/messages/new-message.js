@@ -8,6 +8,8 @@ async function handler(req, res) {
     switch (req.method) {
         case "POST":
             try {
+                req.body.user = req.user.id;
+                
                 const message = await Message.create(req.body);
 
                 res.status(200).json({
