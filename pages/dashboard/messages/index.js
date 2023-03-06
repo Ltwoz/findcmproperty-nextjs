@@ -93,7 +93,7 @@ const AdminMessagesPage = () => {
     return (
         <Layout>
             <Head>
-                <title>Users Dashboard - Find CM Property</title>
+                <title>Messages Dashboard - Find CM Property</title>
             </Head>
             <DashboardNavbar />
             <section id="main" className="flex justify-center items-center">
@@ -104,7 +104,7 @@ const AdminMessagesPage = () => {
                         <section className="bg-white border rounded-md shadow mb-6">
                             <div className="p-6 flex items-center justify-between max-h-[88px]">
                                 <h2 className="hidden md:block text-lg font-semibold">
-                                    All Users
+                                    All Messages
                                 </h2>
                                 <div className="relative w-full md:w-fit">
                                     <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
@@ -136,7 +136,7 @@ const AdminMessagesPage = () => {
                             {data.messages.length < 1 ? (
                                 <div className="flex items-center justify-center py-6 border-t">
                                     <p className="font-medium text-gray-600">
-                                        No users data.
+                                        No messages data.
                                     </p>
                                 </div>
                             ) : (
