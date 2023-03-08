@@ -2,6 +2,7 @@ import dynamic from "next/dynamic";
 import Head from "next/head";
 const Navbar = dynamic(() => import("./navbar"));
 const Footer = dynamic(() => import("./footer"));
+import MessengerCustomerChat from "react-messenger-customer-chat";
 
 const Layout = ({ children }) => {
     return (
@@ -23,6 +24,12 @@ const Layout = ({ children }) => {
                 <meta property="og:image" content="" />
                 <link rel="icon" href="" />
             </Head>
+            {typeof window !== "undefiend" && (
+                <MessengerCustomerChat
+                    pageId="219615218531098"
+                    appId="729744355296187"
+                />
+            )}
             <div
                 className="bg-no-repeat bg-center bg-cover bg-fixed text-gray-900"
                 style={
