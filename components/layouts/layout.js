@@ -2,17 +2,18 @@ import dynamic from "next/dynamic";
 import Head from "next/head";
 const Navbar = dynamic(() => import("./navbar"));
 const Footer = dynamic(() => import("./footer"));
+import MessengerCustomerChat from "react-messenger-customer-chat";
 
 const Layout = ({ children }) => {
     return (
         <>
             <Head>
                 <title>Find CM Property</title>
+                <meta name="description" content="" />
                 <meta
-                    name="description"
-                    content=""
+                    name="keywords"
+                    content="real estate, chiangmai house, property"
                 />
-                <meta name="keywords" content="real estate, chiangmai house, property" />
                 <meta
                     name="viewport"
                     content="width=device-width, initial-scale=1"
@@ -36,7 +37,13 @@ const Layout = ({ children }) => {
                     // style={{ backgroundColor: bgColor }}
                 >
                     <Navbar />
-                    <div className="flex-grow">{children}</div>
+                    <div className="flex-grow">
+                        {children}
+                        <MessengerCustomerChat
+                            pageId="219615218531098"
+                            appId="935203817615198"
+                        />
+                    </div>
                     <Footer />
                 </div>
             </div>
