@@ -31,7 +31,7 @@ const AdminPropertiesPage = () => {
             console.error;
             setLoading(false);
         });
-    }, [link]);
+    }, [link, isDeleted]);
 
     useEffect(() => {
         if (error) {
