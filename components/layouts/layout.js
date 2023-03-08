@@ -2,7 +2,6 @@ import dynamic from "next/dynamic";
 import Head from "next/head";
 const Navbar = dynamic(() => import("./navbar"));
 const Footer = dynamic(() => import("./footer"));
-import MessengerCustomerChat from "react-messenger-customer-chat";
 
 const Layout = ({ children }) => {
     return (
@@ -37,13 +36,7 @@ const Layout = ({ children }) => {
                     // style={{ backgroundColor: bgColor }}
                 >
                     <Navbar />
-                    <div className="flex-grow">
-                        {children}
-                        <MessengerCustomerChat
-                            pageId="219615218531098"
-                            appId="729744355296187"
-                        />
-                    </div>
+                    <div className="flex-grow">{children}</div>
                     <Footer />
                 </div>
             </div>
