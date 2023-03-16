@@ -4,8 +4,9 @@ import { SessionProvider } from "next-auth/react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import * as gtag from "@/lib/gtag";
-import Script from 'next/script'
+import Script from "next/script";
 import { useEffect } from "react";
+import { SidebarContextProvider } from "@/components/contexts/sidebar-context";
 
 export default function App({ Component, pageProps }) {
     const { session } = pageProps;
@@ -44,7 +45,9 @@ export default function App({ Component, pageProps }) {
             />
             <SessionProvider session={session}>
                 <ToastContextProvider>
-                    <Component {...pageProps} />
+                    <SidebarContextProvider>
+                        <Component {...pageProps} />
+                    </SidebarContextProvider>
                 </ToastContextProvider>
             </SessionProvider>
         </>

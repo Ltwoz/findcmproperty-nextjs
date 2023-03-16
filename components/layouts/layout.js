@@ -3,8 +3,14 @@ import Head from "next/head";
 const Navbar = dynamic(() => import("./navbar"));
 const Footer = dynamic(() => import("./footer"));
 import MessengerCustomerChat from "react-messenger-customer-chat";
+import DashboardNavbar from "./dashboard-navbar";
+import { motion } from "framer-motion";
+import DashboardSidebar from "./dashboard-sidebar";
+import { useSidebar } from "../contexts/sidebar-context";
 
-const Layout = ({ children }) => {
+const Layout = ({ children, isDashboard }) => {
+    const { isOpen, isMobile } = useSidebar();
+
     return (
         <>
             <Head>
@@ -31,21 +37,47 @@ const Layout = ({ children }) => {
                 />
             )}
             <div
-                className="bg-no-repeat bg-center bg-cover bg-fixed text-gray-900"
-                style={
-                    {
-                        // backgroundImage: `url(${bgImage})`,
-                    }
-                }
+                id="page-wrapper"
+                className={`min-h-screen flex flex-col text-gray-900`}
             >
-                <div
-                    className={`min-h-screen flex flex-col`}
-                    // style={{ backgroundColor: bgColor }}
-                >
-                    <Navbar />
-                    <div className="flex-grow">{children}</div>
-                    <Footer />
-                </div>
+                {isDashboard ? (
+                    // Dashboard Layout.
+                    <>
+                        <DashboardNavbar />
+                        <div className="flex-grow">
+                            <section id="page-body-wrapper" className="">
+                                <DashboardSidebar />
+                                <motion.div
+                                    id="page-body"
+                                    className={`px-6 mt-20`}
+                                    animate={isOpen ? "mount" : "unmount"}
+                                    initial="unmount"
+                                    exit="unmount"
+                                    variants={{
+                                        unmount: {
+                                            marginLeft: 0,
+                                            transition: { duration: 0.5 },
+                                        },
+                                        mount: {
+                                            marginLeft: isMobile ? 0 : "280px",
+                                            transition: { duration: 0.5 },
+                                        },
+                                    }}
+                                >
+                                    {children}
+                                </motion.div>
+                            </section>
+                        </div>
+                        <Footer />
+                    </>
+                ) : (
+                    // User Layout.
+                    <>
+                        <Navbar />
+                        <div className="flex-grow">{children}</div>
+                        <Footer />
+                    </>
+                )}
             </div>
         </>
     );
