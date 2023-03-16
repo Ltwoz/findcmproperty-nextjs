@@ -209,11 +209,10 @@ const UpdatePropertyPage = () => {
     }
 
     return (
-        <Layout>
+        <Layout isDashboard={true}>
             <Head>
                 <title>{name} - Find CM Property</title>
             </Head>
-            <DashboardNavbar />
             <section id="main" className="flex justify-center items-center">
                 <div className="container">
                     <div className="w-full flex flex-col gap-4">

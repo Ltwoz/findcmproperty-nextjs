@@ -1,12 +1,7 @@
-import { useSidebar } from "@/components/contexts/sidebar-context";
-import DashboardSidebar from "@/components/layouts/dashboard-sidebar";
 import Layout from "@/components/layouts/layout";
 import Head from "next/head";
-import { motion } from "framer-motion";
 
 const DashboardPage = () => {
-    const { isOpen, isMobile } = useSidebar();
-
     return (
         <Layout isDashboard={true}>
             <Head>

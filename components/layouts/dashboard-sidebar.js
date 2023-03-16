@@ -38,9 +38,9 @@ const DashboardSidebar = () => {
         ],
     };
 
-    const { isOpen, setIsOpen } = useSidebar();
+    const { isOpen, setIsOpen, isMobile } = useSidebar();
     const router = useRouter();
-    const { data: session, status } = useSession();
+    const { data: session } = useSession();
     const user = session?.user;
 
     return (
@@ -49,7 +49,7 @@ const DashboardSidebar = () => {
                 id="page-sidebar-wrapper"
                 className="fixed top-0 z-10 h-screen w-[280px] bg-white shadow-md"
                 animate={isOpen ? "mount" : "unmount"}
-                initial="unmount"
+                initial={isMobile ? "unmount" : "mount"}
                 exit="unmount"
                 variants={{
                     unmount: {
@@ -133,6 +133,11 @@ const DashboardSidebar = () => {
                                         className={`hover:bg-gray-100 ${
                                             isActive ? "bg-gray-100" : ""
                                         }`}
+                                        onClick={(e) =>
+                                            isMobile
+                                                ? setIsOpen(false)
+                                                : e.preventDefault()
+                                        }
                                     >
                                         <Link
                                             href={menu.href}
@@ -174,6 +179,11 @@ const DashboardSidebar = () => {
                                         className={`hover:bg-gray-100 ${
                                             isActive ? "bg-gray-100" : ""
                                         }`}
+                                        onClick={(e) =>
+                                            isMobile
+                                                ? setIsOpen(false)
+                                                : e.preventDefault()
+                                        }
                                     >
                                         <Link
                                             href={menu.href}

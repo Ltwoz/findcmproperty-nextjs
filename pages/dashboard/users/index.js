@@ -92,7 +92,7 @@ const AdminUsersPage = () => {
     }, [error, isDeleted, isUpdated, toast]);
 
     return (
-        <Layout>
+        <Layout isDashboard={true}>
             <Head>
                 <title>Users Dashboard - Find CM Property</title>
             </Head>
@@ -106,7 +106,6 @@ const AdminUsersPage = () => {
                     />
                 )}
             </AnimatePresence>
-            <DashboardNavbar />
             <section id="main" className="flex justify-center items-center">
                 <div className="container">
                     {loading ? (

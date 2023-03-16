@@ -51,7 +51,7 @@ const Layout = ({ children, isDashboard }) => {
                                     id="page-body"
                                     className={`px-6 mt-20`}
                                     animate={isOpen ? "mount" : "unmount"}
-                                    initial="unmount"
+                                    initial={isMobile ? "unmount" : "mount"}
                                     exit="unmount"
                                     variants={{
                                         unmount: {

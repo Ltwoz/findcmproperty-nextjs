@@ -10,7 +10,7 @@ const DashboardNavbar = () => {
             id="page-main-header"
             className={`fixed top-0 z-[9] h-20 px-6 shadow-sm flex items-center `}
             animate={isOpen ? "mount" : "unmount"}
-            initial="unmount"
+            initial={isMobile ? "unmount" : "mount"}
             exit="unmount"
             variants={{
                 unmount: {
