@@ -7,10 +7,10 @@ const DashboardPage = () => {
             <Head>
                 <title>Dashboard - Find CM Property</title>
             </Head>
-            <div className="w-full px-2">
+            <div className="w-full">
                 <div
                     id="header"
-                    className="flex py-6 items-center justify-between"
+                    className="flex flex-col md:flex-row gap-4 py-6 items-start md:items-center justify-between"
                 >
                     <div className="flex flex-col">
                         <h2 className="text-2xl font-bold">Dashboard</h2>
@@ -23,7 +23,7 @@ const DashboardPage = () => {
                     </div>
                 </div>
             </div>
-            <div className="w-full px-2"></div>
+            <div className="w-full"></div>
         </Layout>
     );
 };

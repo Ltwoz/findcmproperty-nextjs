@@ -83,8 +83,25 @@ const NewPropertyPage = () => {
             <Head>
                 <title>New Property - Find CM Property</title>
             </Head>
+            <div className="w-full">
+                <div
+                    id="header"
+                    className="flex flex-col md:flex-row gap-4 py-6 items-start md:items-center justify-between"
+                >
+                    <div className="flex flex-col">
+                        <h2 className="text-2xl font-bold">New Properties</h2>
+                        <p className="text-sm">Welcome to admin panel</p>
+                    </div>
+                    <div className="flex flex-col">
+                        <p className="text-sm">
+                            <span>Home</span> / <span>Dashboard</span> /{" "}
+                            <span>Properties</span> / <span>New Properties</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
             <section id="main" className="flex justify-center items-center">
-                <div className="container">
+                <div className="w-full mb-6">
                     <Formik
                         initialValues={{
                             category: {},
@@ -97,7 +114,7 @@ const NewPropertyPage = () => {
                             <Form className="w-full flex flex-col gap-4">
                                 <div
                                     id="property-main"
-                                    className="grid grid-cols-12 w-full bg-white border rounded-md gap-4 md:gap-6 p-6"
+                                    className="grid grid-cols-12 w-full bg-white border rounded-md gap-4 md:gap-6 p-4 md:p-6"
                                 >
                                     <div className="col-span-12">
                                         <h3 className="text-base md:text-lg font-medium leading-6">
@@ -192,7 +209,7 @@ const NewPropertyPage = () => {
                                 </div>
                                 <div
                                     id="details"
-                                    className="grid grid-cols-12 w-full bg-white border rounded-md gap-4 md:gap-6 p-6"
+                                    className="grid grid-cols-12 w-full bg-white border rounded-md gap-4 md:gap-6 p-4 md:p-6"
                                 >
                                     <div className="col-span-12">
                                         <h3 className="text-base md:text-lg font-medium leading-6">
@@ -401,7 +418,7 @@ const NewPropertyPage = () => {
                                 </div>
                                 <div
                                     id="location"
-                                    className="grid grid-cols-12 w-full bg-white border rounded-md gap-4 md:gap-6 p-6"
+                                    className="grid grid-cols-12 w-full bg-white border rounded-md gap-4 md:gap-6 p-4 md:p-6"
                                 >
                                     <div className="col-span-12">
                                         <h3 className="text-base md:text-lg font-medium leading-6">
@@ -453,7 +470,7 @@ const NewPropertyPage = () => {
                                 </div>
                                 <div
                                     id="images"
-                                    className="grid grid-cols-12 w-full bg-white border rounded-md gap-4 md:gap-6 p-6"
+                                    className="grid grid-cols-12 w-full bg-white border rounded-md gap-4 md:gap-6 p-4 md:p-6"
                                 >
                                     <div className="col-span-12">
                                         <h3 className="text-base md:text-lg font-medium leading-6">
@@ -565,7 +582,7 @@ const NewPropertyPage = () => {
 
                                 <div
                                     id="submit"
-                                    className="grid grid-cols-12 w-full bg-white border rounded-md gap-4 md:gap-6 p-6"
+                                    className="grid grid-cols-12 w-full bg-white border rounded-md gap-4 md:gap-6 p-4 md:p-6"
                                 >
                                     <div className="col-span-12 flex items-center justify-between">
                                         <div>

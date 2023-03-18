@@ -95,8 +95,25 @@ const AdminMessagesPage = () => {
             <Head>
                 <title>Messages Dashboard - Find CM Property</title>
             </Head>
+            <div className="w-full">
+                <div
+                    id="header"
+                    className="flex flex-col md:flex-row gap-4 py-6 items-start md:items-center justify-between"
+                >
+                    <div className="flex flex-col">
+                        <h2 className="text-2xl font-bold">Messages</h2>
+                        <p className="text-sm">Welcome to admin panel</p>
+                    </div>
+                    <div className="flex flex-col">
+                        <p className="text-sm">
+                            <span>Home</span> / <span>Dashboard</span> /{" "}
+                            <span>Messages</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
             <section id="main" className="flex justify-center items-center">
-                <div className="container">
+                <div className="w-full mb-6">
                     {loading ? (
                         <LoadingSpiner />
                     ) : (

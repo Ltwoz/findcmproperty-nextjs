@@ -106,8 +106,25 @@ const AdminUsersPage = () => {
                     />
                 )}
             </AnimatePresence>
+            <div className="w-full">
+                <div
+                    id="header"
+                    className="flex flex-col md:flex-row gap-4 py-6 items-start md:items-center justify-between"
+                >
+                    <div className="flex flex-col">
+                        <h2 className="text-2xl font-bold">All Users</h2>
+                        <p className="text-sm">Welcome to admin panel</p>
+                    </div>
+                    <div className="flex flex-col">
+                        <p className="text-sm">
+                            <span>Home</span> / <span>Dashboard</span> /{" "}
+                            <span>Users</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
             <section id="main" className="flex justify-center items-center">
-                <div className="container">
+                <div className="w-full mb-6">
                     {loading ? (
                         <LoadingSpiner />
                     ) : (
@@ -178,7 +195,11 @@ const AdminUsersPage = () => {
                                                         className="border-b border-gray-200 hover:bg-gray-100"
                                                     >
                                                         <td className="py-3 px-6 text-left">
-                                                            {user.username} {session?.user.id === user._id ? "(Me)" : ""}
+                                                            {user.username}{" "}
+                                                            {session?.user
+                                                                .id === user._id
+                                                                ? "(Me)"
+                                                                : ""}
                                                         </td>
                                                         <td className="py-3 px-6 text-left">
                                                             {user.email}

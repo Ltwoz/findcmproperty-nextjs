@@ -8,7 +8,7 @@ const DashboardNavbar = () => {
     return (
         <motion.div
             id="page-main-header"
-            className={`fixed top-0 z-[9] h-20 px-6 shadow-sm flex items-center `}
+            className={`fixed top-0 z-[9] h-20 px-6 shadow-sm flex items-center bg-white`}
             animate={isOpen ? "mount" : "unmount"}
             initial={isMobile ? "unmount" : "mount"}
             exit="unmount"
@@ -26,7 +26,7 @@ const DashboardNavbar = () => {
             }}
         >
             <div
-                onClick={() => setIsOpen(!isOpen)}
+                onClick={() => setIsOpen((prev) => !prev)}
                 className={`inline-flex items-center font-medium text-black py-2 rounded-md hover:cursor-pointer transition-all ${isOpen ? "" : "rotate-180"}`}
             >
                 <svg

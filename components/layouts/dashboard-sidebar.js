@@ -4,6 +4,7 @@ import { useSidebar } from "../contexts/sidebar-context";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
+import { useEffect } from "react";
 
 const DashboardSidebar = () => {
     const Menus = {
@@ -43,11 +44,23 @@ const DashboardSidebar = () => {
     const { data: session } = useSession();
     const user = session?.user;
 
+    // useEffect(() => {
+    //     if (isMobile) {
+    //         const sidebarHandler = () => setIsOpen(false);
+
+    //         window.addEventListener("click", sidebarHandler);
+
+    //         return () => {
+    //             window.removeEventListener("click", sidebarHandler);
+    //         };
+    //     }
+    // }, [isMobile, isOpen, setIsOpen]);
+
     return (
         <AnimatePresence mode="wait">
             <motion.div
                 id="page-sidebar-wrapper"
-                className="fixed top-0 z-10 h-screen w-[280px] bg-white shadow-md"
+                className="fixed top-0 z-[90] h-screen overflow-auto w-[280px] bg-white shadow-md"
                 animate={isOpen ? "mount" : "unmount"}
                 initial={isMobile ? "unmount" : "mount"}
                 exit="unmount"
