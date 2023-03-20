@@ -105,10 +105,10 @@ const AdminPropertiesPage = () => {
                                     <table className="w-full table-fixed">
                                         <thead>
                                             <tr className="bg-gray-200 text-gray-600 text-sm leading-normal">
-                                                <th className="py-3 px-6 text-left w-24">
+                                                <th className="py-3 px-6 text-left w-32">
                                                     #
                                                 </th>
-                                                <th className="py-3 px-6 text-left w-52 md:w-80">
+                                                <th className="py-3 px-6 text-left w-52 md:w-72">
                                                     NAME
                                                 </th>
                                                 <th className="py-3 px-6 text-left w-36">
