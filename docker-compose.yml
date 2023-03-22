@@ -10,8 +10,10 @@ services:
     env_file:
       - .env.local
     volumes:
-      - .:/app
+      - ./:/app
+      - ./public:/app/public
       - /app/node_modules
+      - /app/.next
     restart: always
     ports:
       - 3000:3000
