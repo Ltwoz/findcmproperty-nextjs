@@ -20,7 +20,14 @@ services:
     networks:
       - my_network
 
-  # Add more containers below (nginx, postgres, etc.)
+  nginx:
+    image: nginx:1.22-alpine
+    container_name: nginx
+    volumes:
+      - ./:/etc/nginx/conf.d/
+    ports:
+      - 80:80
+      - 443:443
 
 networks:
   my_network:

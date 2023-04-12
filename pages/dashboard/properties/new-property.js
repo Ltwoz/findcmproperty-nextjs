@@ -28,6 +28,7 @@ const NewPropertyPage = () => {
     // CRUD State.
     const [isSuccess, setIsSuccess] = useState(false);
     const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(false);
 
     const toast = useToast();
 
@@ -55,6 +56,8 @@ const NewPropertyPage = () => {
         const config = { headers: { "Content-Type": "application/json" } };
 
         try {
+            setLoading(true);
+
             const { data } = await axios.post(
                 `/api/admin/properties/new-property`,
                 values,
@@ -65,10 +68,9 @@ const NewPropertyPage = () => {
         } catch (error) {
             setError(error.message);
             console.error(error.message);
+        } finally {
+            setLoading(false)
         }
-
-        // console.log(JSON.stringify(values, null, 2));
-        console.log(values);
     }
 
     function removeImage(e, actions) {
@@ -654,7 +656,8 @@ const NewPropertyPage = () => {
                                     <div className="col-span-12 flex items-center justify-end gap-x-4">
                                         <button
                                             type="submit"
-                                            className="inline-flex items-center bg-primary rounded-md transition-all overflow-hidden"
+                                            disabled={loading ? true : false}
+                                            className="inline-flex items-center bg-primary disabled:bg-gray-400 rounded-md transition-all overflow-hidden disabled:cursor-not-allowed"
                                         >
                                             <div className="w-full h-full inline-flex items-center justify-center font-medium text-white hover:backdrop-brightness-95 py-2 px-4">
                                                 <svg
@@ -672,7 +675,7 @@ const NewPropertyPage = () => {
                                                     />
                                                 </svg>
                                                 <span className="block">
-                                                    Create
+                                                    {loading ? "Loading" : "Create"}
                                                 </span>
                                             </div>
                                         </button>
