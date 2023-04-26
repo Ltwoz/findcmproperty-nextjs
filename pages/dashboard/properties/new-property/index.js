@@ -7,6 +7,8 @@ import Image from "next/image";
 import axios from "axios";
 import { useToast } from "@/components/contexts/toast-context";
 import Select from "@/components/ui/select-dropdown";
+import CloudinaryButton from "@/components/cloudinary/cloudinary-button";
+import { useRouter } from "next/router";
 
 const categoryOptions = [
     { label: "House", value: "House" },
@@ -21,6 +23,8 @@ const typeOptions = [
 ];
 
 const NewPropertyPage = () => {
+    const router = useRouter();
+
     const [selectedCategory, setSelectedCategory] = useState({});
     const [selectedType, setSelectedType] = useState({});
     const [imagesPreview, setImagesPreview] = useState([]);
@@ -64,20 +68,19 @@ const NewPropertyPage = () => {
                 config
             );
 
+            await axios.post(
+                `/api/admin/properties/cloudinary-create-folder?id=${data.property._id}`
+            );
+            
             setIsSuccess(data.success);
+
+            router.push(`/dashboard/properties/new-property/${data.property._id}`);
         } catch (error) {
             setError(error.message);
             console.error(error.message);
         } finally {
-            setLoading(false)
+            setLoading(false);
         }
-    }
-
-    function removeImage(e, actions) {
-        const filtered = imagesPreview.filter((item, idx) => idx !== e);
-        setImagesPreview(filtered);
-        actions.values.images?.splice(e, 1);
-        console.log(filtered);
     }
 
     return (
@@ -97,7 +100,8 @@ const NewPropertyPage = () => {
                     <div className="flex flex-col">
                         <p className="text-sm">
                             <span>Home</span> / <span>Dashboard</span> /{" "}
-                            <span>Properties</span> / <span>New Properties</span>
+                            <span>Properties</span> /{" "}
+                            <span>New Properties</span>
                         </p>
                     </div>
                 </div>
@@ -107,7 +111,6 @@ const NewPropertyPage = () => {
                     <Formik
                         initialValues={{
                             category: {},
-                            images: [],
                             isActive: true,
                         }}
                         onSubmit={submitForm}
@@ -471,118 +474,6 @@ const NewPropertyPage = () => {
                                     </div>
                                 </div>
                                 <div
-                                    id="images"
-                                    className="grid grid-cols-12 w-full bg-white border rounded-md gap-4 md:gap-6 p-4 md:p-6"
-                                >
-                                    <div className="col-span-12">
-                                        <h3 className="text-base md:text-lg font-medium leading-6">
-                                            Images
-                                        </h3>
-                                        <p className="mt-1 text-xs md:text-sm text-gray-600">
-                                            Images for this property.
-                                        </p>
-                                    </div>
-
-                                    <hr className="col-span-12" />
-
-                                    <div className="col-span-12">
-                                        {imagesPreview.length > 0 && (
-                                            <div className="grid grid-cols-6 gap-4 p-4 border rounded-lg overflow-hidden">
-                                                {imagesPreview?.map(
-                                                    (image, i) => (
-                                                        <div
-                                                            key={i}
-                                                            className="w-full aspect-square relative flex items-center rounded-lg overflow-hidden"
-                                                        >
-                                                            <Image
-                                                                alt={image}
-                                                                src={image}
-                                                                draggable="false"
-                                                                fill
-                                                                className="select-none object-cover"
-                                                            />
-                                                            <div className="flex absolute top-1 right-1 z-[1]">
-                                                                <button
-                                                                    onClick={() =>
-                                                                        removeImage(
-                                                                            i,
-                                                                            formik
-                                                                        )
-                                                                    }
-                                                                    className="bg-white text-red-600 transition-all border border-transparent hover:border-red-600 rounded-lg p-1"
-                                                                >
-                                                                    <svg
-                                                                        xmlns="http://www.w3.org/2000/svg"
-                                                                        fill="none"
-                                                                        viewBox="0 0 24 24"
-                                                                        stroke="currentColor"
-                                                                        className="w-5 h-5"
-                                                                    >
-                                                                        <path
-                                                                            strokeLinecap="round"
-                                                                            strokeLinejoin="round"
-                                                                            strokeWidth="2"
-                                                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                                                                        />
-                                                                    </svg>
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                    )
-                                                )}
-                                            </div>
-                                        )}
-                                        <div className="col-span-12">
-                                            <input
-                                                type="file"
-                                                accept="image/*"
-                                                multiple
-                                                onChange={(e) => {
-                                                    const files = Array.from(
-                                                        e.target.files
-                                                    );
-
-                                                    files.forEach(
-                                                        (file, idx) => {
-                                                            const reader =
-                                                                new FileReader();
-                                                            console.log(
-                                                                idx + 1
-                                                            );
-
-                                                            reader.onload =
-                                                                () => {
-                                                                    if (
-                                                                        reader.readyState ===
-                                                                        2
-                                                                    ) {
-                                                                        setImagesPreview(
-                                                                            (
-                                                                                old
-                                                                            ) => [
-                                                                                ...old,
-                                                                                reader.result,
-                                                                            ]
-                                                                        );
-                                                                        formik.values.images?.push(
-                                                                            reader.result
-                                                                            // file.name
-                                                                        );
-                                                                    }
-                                                                };
-                                                            reader.readAsDataURL(
-                                                                file
-                                                            );
-                                                        }
-                                                    );
-                                                }}
-                                                className="mt-1 p-2 block w-full rounded-md border focus:outline-none border-gray-300 focus:border-blue-600 shadow-sm text-sm md:text-base"
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div
                                     id="submit"
                                     className="grid grid-cols-12 w-full bg-white border rounded-md gap-4 md:gap-6 p-4 md:p-6"
                                 >
@@ -675,7 +566,9 @@ const NewPropertyPage = () => {
                                                     />
                                                 </svg>
                                                 <span className="block">
-                                                    {loading ? "Loading" : "Create"}
+                                                    {loading
+                                                        ? "Loading"
+                                                        : "Create"}
                                                 </span>
                                             </div>
                                         </button>

@@ -1,13 +1,12 @@
-import DashboardNavbar from "@/components/layouts/dashboard-navbar";
 import Layout from "@/components/layouts/layout";
 import Head from "next/head";
-import { Formik, Field, Form } from "formik";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import axios from "axios";
 import { useToast } from "@/components/contexts/toast-context";
-import { useRouter } from "next/router";
 import Select from "@/components/ui/select-dropdown";
+import CloudinaryButton from "@/components/cloudinary/cloudinary-button";
+import LoadingSpiner from "@/components/ui/spiner";
 
 const categoryOptions = [
     { label: "House", value: "House" },
@@ -21,12 +20,11 @@ const typeOptions = [
     { label: "Rent", value: "Rent" },
 ];
 
-const UpdatePropertyPage = () => {
-    const router = useRouter();
-
+const UpdatePropertyPage = ({ id, cloudName, apiKey }) => {
     const [property, setProperty] = useState({});
 
     // CRUD State.
+    const [firstLoad, setFirstLoad] = useState(true);
     const [loading, setLoading] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
     const [error, setError] = useState(null);
@@ -72,19 +70,19 @@ const UpdatePropertyPage = () => {
     useEffect(() => {
         const getProperty = async () => {
             try {
-                const { data } = await axios.get(
-                    `/api/admin/properties/${router.query.id}`
-                );
+                const { data } = await axios.get(`/api/admin/properties/${id}`);
                 setProperty(data.property);
             } catch (error) {
-                console.error(error);
+                console.log(error);
+            } finally {
+                setFirstLoad(false);
             }
         };
 
-        if (router.query.id) {
+        if (id) {
             getProperty();
         }
-    }, [router.query.id]);
+    }, [id]);
 
     useEffect(() => {
         setName(property.name);
@@ -151,7 +149,7 @@ const UpdatePropertyPage = () => {
             setLoading(true);
 
             const { data } = await axios.put(
-                `/api/admin/properties/${router.query.id}`,
+                `/api/admin/properties/${id}`,
                 {
                     name,
                     description,
@@ -183,30 +181,36 @@ const UpdatePropertyPage = () => {
         // console.log(features);
     }
 
-    const updateProductImagesChange = (e) => {
-        const files = Array.from(e.target.files);
+    function insertHandler(data) {
+        let updateImages = [];
 
-        files.forEach((file) => {
-            const reader = new FileReader();
-
-            reader.onload = () => {
-                if (reader.readyState === 2) {
-                    setImagesPreview((old) => [...old, reader.result]);
-                    setImages((old) => [...old, reader.result]);
-                }
-            };
-
-            reader.readAsDataURL(file);
+        data.assets.forEach((asset) => {
+            updateImages.push({
+                public_id: asset.public_id,
+                url: asset.secure_url,
+            });
         });
-    };
+        console.log(updateImages);
+        setImages(updateImages);
+    }
 
-    function removeImage(imageIdx) {
-        const filtered = imagesPreview.filter((item, idx) => idx !== imageIdx);
-        setImagesPreview(filtered);
+    if (firstLoad) {
+        return (
+            <Layout isDashboard={true}>
+                <LoadingSpiner />
+            </Layout>
+        );
+    }
 
-        const newImages = [...images];
-        newImages.splice(imageIdx, 1);
-        setImages(newImages);
+    if (Object.keys(property).length === 0) {
+        return (
+            <Layout isDashboard={true}>
+                <Head>
+                    <title>Not found - Find CM Property</title>
+                </Head>
+                <div>Not found</div>
+            </Layout>
+        );
     }
 
     return (
@@ -756,42 +760,20 @@ const UpdatePropertyPage = () => {
                                                     fill
                                                     className="select-none object-cover"
                                                 />
-                                                <div className="flex absolute top-1 right-1 z-[1]">
-                                                    <button
-                                                        onClick={() =>
-                                                            removeImage(i)
-                                                        }
-                                                        className="bg-white text-red-600 transition-all border border-transparent hover:border-red-600 rounded-lg p-1"
-                                                    >
-                                                        <svg
-                                                            xmlns="http://www.w3.org/2000/svg"
-                                                            fill="none"
-                                                            viewBox="0 0 24 24"
-                                                            stroke="currentColor"
-                                                            className="w-4 md:w-5 h-4 md:h-5"
-                                                        >
-                                                            <path
-                                                                strokeLinecap="round"
-                                                                strokeLinejoin="round"
-                                                                strokeWidth="2"
-                                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                                                            />
-                                                        </svg>
-                                                    </button>
-                                                </div>
                                             </div>
                                         ))}
                                     </div>
                                 )}
 
                                 <div className="col-span-12">
-                                    <input
-                                        type="file"
-                                        accept="image/*"
-                                        multiple
-                                        onChange={updateProductImagesChange}
-                                        className="mt-1 p-2 block w-full rounded-md border focus:outline-none border-gray-300 focus:border-blue-600 shadow-sm text-sm md:text-base"
-                                    />
+                                    <div>
+                                        <CloudinaryButton
+                                            id={id}
+                                            cloudName={cloudName}
+                                            apiKey={apiKey}
+                                            insertHandler={insertHandler}
+                                        />
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -893,3 +875,17 @@ const UpdatePropertyPage = () => {
 };
 
 export default UpdatePropertyPage;
+
+export const getServerSideProps = async (ctx) => {
+    const id = ctx.params.id;
+    const cloudName = process.env.CLOUDINARY_NAME;
+    const apiKey = process.env.CLOUDINARY_API_KEY;
+
+    return {
+        props: {
+            id,
+            cloudName,
+            apiKey,
+        },
+    };
+};
