@@ -1,14 +1,14 @@
-import DashboardNavbar from "@/components/layouts/dashboard-navbar";
 import Layout from "@/components/layouts/layout";
 import Head from "next/head";
-import { Formik, Field, Form } from "formik";
+import { Formik, Field, Form, useField } from "formik";
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import axios from "axios";
 import { useToast } from "@/components/contexts/toast-context";
 import Select from "@/components/ui/select-dropdown";
-import CloudinaryButton from "@/components/cloudinary/cloudinary-button";
 import { useRouter } from "next/router";
+import dynamic from 'next/dynamic';
+import "react-quill/dist/quill.snow.css";
+const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
 const categoryOptions = [
     { label: "House", value: "House" },
@@ -21,6 +21,28 @@ const typeOptions = [
     { label: "Sale", value: "Sale" },
     { label: "Rent", value: "Rent" },
 ];
+
+function FormikReactQuill({ label, ...props }) {
+    const [field, meta, helpers] = useField(props.name);
+
+    function handleChange(value) {
+        helpers.setValue(value);
+    }
+
+    return (
+        <>
+            <ReactQuill
+                {...field}
+                value={props.value || field.value}
+                onChange={handleChange}
+                className="mt-1"
+            />
+            {meta.touched && meta.error && (
+                <div className="text-red-500">{meta.error}</div>
+            )}
+        </>
+    );
+}
 
 const NewPropertyPage = () => {
     const router = useRouter();
@@ -57,6 +79,7 @@ const NewPropertyPage = () => {
     }, [error, isSuccess, toast]);
 
     async function submitForm(values, actions) {
+        // console.log(values);
         const config = { headers: { "Content-Type": "application/json" } };
 
         try {
@@ -71,10 +94,12 @@ const NewPropertyPage = () => {
             await axios.post(
                 `/api/admin/properties/cloudinary-create-folder?id=${data.property._id}`
             );
-            
+
             setIsSuccess(data.success);
 
-            router.push(`/dashboard/properties/new-property/${data.property._id}`);
+            router.push(
+                `/dashboard/properties/new-property/${data.property._id}`
+            );
         } catch (error) {
             setError(error.message);
             console.error(error.message);
@@ -112,6 +137,7 @@ const NewPropertyPage = () => {
                         initialValues={{
                             category: {},
                             isActive: true,
+                            description: "",
                         }}
                         onSubmit={submitForm}
                     >
@@ -146,13 +172,9 @@ const NewPropertyPage = () => {
                                         <label className="block text-xs md:text-sm font-medium tracking-wide">
                                             Description
                                         </label>
-                                        <Field
-                                            as="textarea"
-                                            type="text"
+                                        <FormikReactQuill
                                             name="description"
-                                            placeholder="Some description for this property"
-                                            rows="4"
-                                            className="mt-1 p-2 block w-full min-h-[42px] max-h-[210px] rounded-md border focus:outline-none border-gray-300 focus:border-blue-600 shadow-sm text-sm md:text-base"
+                                            label="Description"
                                         />
                                     </div>
                                     <div className="col-span-6 md:col-span-3">

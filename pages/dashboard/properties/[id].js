@@ -7,6 +7,9 @@ import { useToast } from "@/components/contexts/toast-context";
 import Select from "@/components/ui/select-dropdown";
 import CloudinaryButton from "@/components/cloudinary/cloudinary-button";
 import LoadingSpiner from "@/components/ui/spiner";
+import dynamic from "next/dynamic";
+import "react-quill/dist/quill.snow.css";
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 const categoryOptions = [
     { label: "House", value: "House" },
@@ -272,16 +275,12 @@ const UpdatePropertyPage = ({ id, cloudName, apiKey }) => {
                                 <label className="block text-xs md:text-sm font-medium tracking-wide">
                                     Description
                                 </label>
-                                <textarea
-                                    type="text"
-                                    name="description"
+                                <ReactQuill
                                     value={description}
-                                    onChange={(e) =>
-                                        setDescription(e.target.value)
+                                    onChange={(value) =>
+                                        setDescription(value)
                                     }
-                                    placeholder="Some description for this property"
-                                    rows="4"
-                                    className="mt-1 p-2 block w-full min-h-[42px] max-h-[210px] rounded-md border focus:outline-none border-gray-300 focus:border-blue-600 shadow-sm text-sm md:text-base"
+                                    className="mt-1"
                                 />
                             </div>
                             <div className="col-span-6 md:col-span-3">
@@ -861,7 +860,7 @@ const UpdatePropertyPage = ({ id, cloudName, apiKey }) => {
                                             />
                                         </svg>
                                         <span className="block">
-                                            {loading ? "Loading" : "Create"}
+                                            {loading ? "Loading" : "Update"}
                                         </span>
                                     </div>
                                 </button>
