@@ -13,6 +13,7 @@ const CloudinaryButton = ({ id, cloudName, apiKey, insertHandler }) => {
                 folder: {
                     path: `properties/${id}`,
                 },
+                max_files: 100,
             },
             {
                 insertHandler: insertHandler,
