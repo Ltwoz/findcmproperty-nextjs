@@ -6,9 +6,9 @@ import axios from "axios";
 import { useToast } from "@/components/contexts/toast-context";
 import Select from "@/components/ui/select-dropdown";
 import { useRouter } from "next/router";
-import dynamic from 'next/dynamic';
+import dynamic from "next/dynamic";
 import "react-quill/dist/quill.snow.css";
-const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 const categoryOptions = [
     { label: "House", value: "House" },
@@ -32,10 +32,10 @@ function FormikReactQuill({ label, ...props }) {
     return (
         <>
             <ReactQuill
-                {...field}
-                value={props.value || field.value}
+                value={field.value}
                 onChange={handleChange}
                 className="mt-1"
+                {...props}
             />
             {meta.touched && meta.error && (
                 <div className="text-red-500">{meta.error}</div>
@@ -49,7 +49,6 @@ const NewPropertyPage = () => {
 
     const [selectedCategory, setSelectedCategory] = useState({});
     const [selectedType, setSelectedType] = useState({});
-    const [imagesPreview, setImagesPreview] = useState([]);
 
     // CRUD State.
     const [isSuccess, setIsSuccess] = useState(false);
@@ -172,10 +171,7 @@ const NewPropertyPage = () => {
                                         <label className="block text-xs md:text-sm font-medium tracking-wide">
                                             Description
                                         </label>
-                                        <FormikReactQuill
-                                            name="description"
-                                            label="Description"
-                                        />
+                                        <FormikReactQuill name="description" />
                                     </div>
                                     <div className="col-span-6 md:col-span-3">
                                         <label className="block text-xs md:text-sm font-medium tracking-wide">
