@@ -17,7 +17,7 @@ const sortOptions = [
     { label: "Lowest Price", value: "lowestPrice" },
 ];
 
-const FilterForm = ({ setLink }) => {
+const FilterForm = ({ setLink, page }) => {
     const router = useRouter();
 
     const [keyword, setKeyword] = useState("");
@@ -37,13 +37,13 @@ const FilterForm = ({ setLink }) => {
                 location && `&location=${location}`
             }${status && `&type=${status}`}${
                 type.value && `&category=${type.value}`
-            }&sort=${sort.value}`;
+            }&sort=${sort.value}&page=${page}`;
 
             setLink(newLink);
         }, 500);
 
         return () => clearTimeout(debounce);
-    }, [keyword, location, setLink, sort, status, type]);
+    }, [keyword, location, setLink, sort, status, type, page]);
 
     return (
         <form autoComplete="off" className="w-full grid grid-cols-3 gap-4">

@@ -1,6 +1,7 @@
 import Layout from "@/components/layouts/layout";
 import ListPropertyCard from "@/components/ui/cards/list-property-card";
 import FilterForm from "@/components/ui/filter-form";
+import Pagination from "@/components/ui/pagination";
 import LoadingSpiner from "@/components/ui/spiner";
 import axios from "axios";
 import Head from "next/head";
@@ -15,8 +16,12 @@ const PropertiesPage = () => {
     const [data, setData] = useState({});
     const [loading, setLoading] = useState(true);
 
+    const [page, setPage] = useState(1);
+
     const [link, setLink] = useState(
-        `/api/properties?isActive=true${status ? `&type=${status}` : ""}`
+        `/api/properties?isActive=true${
+            status ? `&type=${status}` : ""
+        }&page=${page}`
     );
 
     useEffect(() => {
@@ -43,37 +48,51 @@ const PropertiesPage = () => {
                     {loading ? (
                         <LoadingSpiner />
                     ) : (
-                        <div className="md:grid md:grid-cols-3 md:gap-6">
-                            <div className="md:col-span-1 mb-4 md:mb-0">
-                                <div className="flex flex-col gap-1.5 p-4 md:sticky md:top-[20px] bg-white border shadow rounded-md">
-                                    <FilterForm setLink={setLink} />
-                                </div>
-                            </div>
-                            <div className="md:col-span-2 flex flex-col gap-4">
-                                <div className="flex justify-between border rounded-md p-4">
-                                    <div>
-                                        <span className="text-primary font-semibold">
-                                            {data.filteredPropertiesCount}
-                                        </span>{" "}
-                                        Search results
+                        <>
+                            <div className="md:grid md:grid-cols-3 md:gap-6">
+                                <div className="md:col-span-1 mb-4 md:mb-0">
+                                    <div className="flex flex-col gap-1.5 p-4 md:sticky md:top-[20px] bg-white border shadow rounded-md">
+                                        <FilterForm setLink={setLink} page={page} />
                                     </div>
                                 </div>
-                                <div className="flex flex-col gap-4">
-                                    {properties.length !== 0 ? (
-                                        properties.map((property, i) => (
-                                            <ListPropertyCard
-                                                key={i}
-                                                property={property}
-                                            />
-                                        ))
-                                    ) : (
-                                        <div className="text-center">
-                                            Property not found.
+                                <div className="md:col-span-2 flex flex-col gap-4">
+                                    <div className="flex justify-between border rounded-md p-4">
+                                        <div>
+                                            <span className="text-primary font-semibold">
+                                                {data.filteredPropertiesCount}
+                                            </span>{" "}
+                                            Search results
                                         </div>
-                                    )}
+                                    </div>
+                                    <div className="flex flex-col gap-4">
+                                        {properties.length !== 0 ? (
+                                            properties.map((property, i) => (
+                                                <ListPropertyCard
+                                                    key={i}
+                                                    property={property}
+                                                />
+                                            ))
+                                        ) : (
+                                            <div className="text-center">
+                                                Property not found.
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                            {!(page === 0 || data.totalPageCount < 2) && (
+                                <div
+                                    id="pagination"
+                                    className="flex px-6 py-3 items-center justify-center md:justify-end"
+                                >
+                                    <Pagination
+                                        currentPage={page}
+                                        totalPage={data.totalPageCount}
+                                        onPageChange={(page) => setPage(page)}
+                                    />
+                                </div>
+                            )}
+                        </>
                     )}
                 </div>
             </section>

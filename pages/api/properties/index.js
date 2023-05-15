@@ -8,7 +8,7 @@ export default async function handler(req, res) {
     switch (req.method) {
         case "GET":
             try {
-                const resultPerPage = 5;
+                const resultPerPage = 15;
                 const propertiesCount = await Property.countDocuments();
 
                 const apiFeature = new ApiFeatures(Property.find(), req.query)
@@ -25,12 +25,17 @@ export default async function handler(req, res) {
 
                 properties = await apiFeature.query.clone();
 
+                const totalPageCount = Math.ceil(
+                    filteredPropertiesCount / resultPerPage
+                );
+
                 res.status(200).json({
                     success: true,
                     properties,
                     filteredPropertiesCount,
                     resultPerPage,
-                    propertiesCount
+                    propertiesCount,
+                    totalPageCount
                 });
             } catch (error) {
                 res.status(500).json({
