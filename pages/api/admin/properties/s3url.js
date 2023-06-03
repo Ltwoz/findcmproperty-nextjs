@@ -1,13 +1,12 @@
 import dbConnect from "@/lib/db-connect";
 import { authorizeRoles, isAuthenticatedUser } from "@/middlewares/auth";
-import Property from "@/models/property";
-
 import uploadFile from "@/utils/s3";
 import multer from "multer";
 import { promisify } from "util";
 
 // Create a multer instance and configure it
-const uploadMiddleware = multer().array("images");
+const uploadMiddleware = multer({ dest: 'uploads/' }).array("images");
+
 const uploadMiddlewareAsync = promisify(uploadMiddleware);
 
 const handler = async (req, res) => {
@@ -16,17 +15,15 @@ const handler = async (req, res) => {
     switch (req.method) {
         case "POST":
             try {
-                req.body.user = req.user.id;
-
                 await uploadMiddlewareAsync(req, res);
 
                 const files = req.files;
+                console.log("Uploaded files:", files);
 
                 const result = await uploadFile(files);
+                console.log("result:", result);
 
-                const property = await Property.create(req.body);
-
-                res.status(201).json({ success: true, property });
+                return res.status(200).json({ success: true, result });
             } catch (error) {
                 console.log(error);
                 res.status(500).json({
@@ -42,6 +39,12 @@ const handler = async (req, res) => {
             });
             break;
     }
+};
+
+export const config = {
+    api: {
+        bodyParser: false,
+    },
 };
 
 export default isAuthenticatedUser(authorizeRoles(handler, "admin"));
