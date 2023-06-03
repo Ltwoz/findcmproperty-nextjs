@@ -10,8 +10,8 @@ const uploadFile = async (files) => {
     console.log("files to upload s3 :", files);
 
     const uploadPromises = files.map(async (file) => {
-        console.log("file :", file);
-        const fileStream = fs.createReadStream(file.path);
+        // const fileStream = fs.createReadStream(file.buffer);
+        // console.log("fileStream :", fileStream);
 
         const s3 = new AWS.S3({
             accessKeyId: accessKeyId,
@@ -22,8 +22,8 @@ const uploadFile = async (files) => {
 
         const params = {
             Bucket: bucketName,
-            Body: fileStream,
-            Key: `test/${file.filename}`,
+            Body: file.buffer,
+            Key: `test/${file.originalname}`,
         };
 
         const uploadResult = await s3.upload(params).promise();

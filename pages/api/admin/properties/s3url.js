@@ -4,8 +4,10 @@ import uploadFile from "@/utils/s3";
 import multer from "multer";
 import { promisify } from "util";
 
+const storage = multer.memoryStorage()
+
 // Create a multer instance and configure it
-const uploadMiddleware = multer({ dest: 'uploads/' }).array("images");
+const uploadMiddleware = multer({ storage: storage }).array("images");
 
 const uploadMiddlewareAsync = promisify(uploadMiddleware);
 
