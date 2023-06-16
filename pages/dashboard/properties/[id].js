@@ -780,9 +780,10 @@ const UpdatePropertyPage = ({ id }) => {
                                             const files = Array.from(
                                                 e.target.files
                                             );
+                                            console.log(files);
 
                                             files.forEach((file) => {
-                                                setImages((old) => [
+                                                setFiles((old) => [
                                                     ...old,
                                                     file,
                                                 ]);
