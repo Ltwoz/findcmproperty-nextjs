@@ -60,7 +60,7 @@ const DashboardSidebar = () => {
         <AnimatePresence mode="wait">
             <motion.div
                 id="page-sidebar-wrapper"
-                className="fixed top-0 z-[90] h-screen overflow-auto w-[280px] bg-white shadow-md"
+                className="fixed top-0 z-[90] h-screen overflow-auto w-[280px] bg-zinc-900 shadow-md"
                 animate={isOpen ? "mount" : "unmount"}
                 initial={isMobile ? "unmount" : "mount"}
                 exit="unmount"
@@ -93,7 +93,7 @@ const DashboardSidebar = () => {
                     </Link>
                     <div
                         onClick={() => setIsOpen(!isOpen)}
-                        className={`absolute inset-y-0 right-5 xl:hidden inline-flex items-center font-medium text-black py-2 rounded-md hover:cursor-pointer transition-all`}
+                        className={`absolute inset-y-0 right-5 xl:hidden inline-flex items-center font-medium text-gray-100 py-2 rounded-md hover:cursor-pointer transition-all`}
                     >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -112,7 +112,7 @@ const DashboardSidebar = () => {
                     </div>
                 </div>
                 <ul id="main-sidebar">
-                    <li className="bg-gray-100 p-5">
+                    <li className="bg-zinc-800 p-5">
                         <div className="flex flex-row items-center gap-6">
                             <div className="aspect-square w-10 h-10 relative overflow-hidden rounded-full">
                                 <Image
@@ -124,7 +124,7 @@ const DashboardSidebar = () => {
                                 />
                             </div>
                             <div className="flex flex-col gap-2">
-                                <div className="text-base leading-4 font-medium">
+                                <div className="text-base leading-4 font-medium text-gray-100">
                                     {user?.username}
                                 </div>
                                 <div className="text-sm leading-4 font-semibold text-primary">
@@ -134,7 +134,7 @@ const DashboardSidebar = () => {
                         </div>
                     </li>
                     <li className="mt-6">
-                        <span className="block pl-4 mb-2 font-medium">
+                        <span className="block pl-4 mb-2 font-medium text-gray-100">
                             Main
                         </span>
                         <ul>
@@ -143,8 +143,8 @@ const DashboardSidebar = () => {
                                 return (
                                     <li
                                         key={i}
-                                        className={`hover:bg-gray-100 ${
-                                            isActive ? "bg-gray-100" : ""
+                                        className={`hover:bg-gray-100/90 text-gray-100 hover:text-zinc-900 ${
+                                            isActive ? "bg-gray-100 text-zinc-900" : ""
                                         }`}
                                         onClick={(e) =>
                                             isMobile
@@ -180,7 +180,7 @@ const DashboardSidebar = () => {
                         </ul>
                     </li>
                     <li className="mt-6">
-                        <span className="block pl-4 mb-2 font-medium">
+                        <span className="block pl-4 mb-2 font-medium text-gray-100">
                             Manage
                         </span>
                         <ul>
@@ -189,8 +189,8 @@ const DashboardSidebar = () => {
                                 return (
                                     <li
                                         key={i}
-                                        className={`hover:bg-gray-100 ${
-                                            isActive ? "bg-gray-100" : ""
+                                        className={`hover:bg-gray-100/90 text-gray-100 hover:text-zinc-900 ${
+                                            isActive ? "bg-gray-100 text-zinc-900" : ""
                                         }`}
                                         onClick={(e) =>
                                             isMobile

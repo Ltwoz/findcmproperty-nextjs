@@ -3,13 +3,14 @@ import { authorizeRoles, isAuthenticatedUser } from "@/middlewares/auth";
 import Property from "@/models/property";
 import cloudinary from "@/lib/cloudinary";
 
-export const config = {
-    api: {
-        bodyParser: {
-            sizeLimit: "100mb",
-        },
-    },
-};
+import { uploadFile, deleteFiles } from "@/utils/s3";
+import multer from "multer";
+import { promisify } from "util";
+
+// Create a multer instance and configure it
+const storage = multer.memoryStorage();
+const uploadMiddleware = multer({ storage: storage }).array("files");
+const uploadMiddlewareAsync = promisify(uploadMiddleware);
 
 const handler = async (req, res) => {
     await dbConnect();
@@ -29,6 +30,8 @@ const handler = async (req, res) => {
             break;
         case "PUT":
             try {
+                await uploadMiddlewareAsync(req, res);
+
                 let property = await Property.findById(req.query.id);
 
                 if (!property) {
@@ -37,6 +40,65 @@ const handler = async (req, res) => {
                         message: "Property not found.",
                     });
                 }
+
+                req.body.details = JSON.parse(req.body.details);
+                req.body.features = JSON.parse(req.body.features);
+                req.body.services = JSON.parse(req.body.services);
+
+                // Images Array
+                const oldImages = property.images || [];
+                const currentImages = [];
+                const updateImages = [];
+                const files = req.files;
+
+                // JSON Parse images if it's not undefined
+                if (req.body.images !== undefined) {
+                    for (let i = 0; i < req.body.images.length; i++) {
+                        const image = req.body.images[i];
+                        currentImages.push(JSON.parse(image));
+                    }
+                }
+                console.log("currentImages:", currentImages);
+
+                // Check unmatched
+                const unmatchedImages = oldImages.filter(
+                    (img) =>
+                        !currentImages.some(
+                            (image) => image.public_id === img.public_id
+                        )
+                );
+                console.log("unmatchedImages :", unmatchedImages);
+
+                //Deleting Images From AWS S3
+                await deleteFiles(unmatchedImages);
+
+                // Upload Images
+                const result = await uploadFile(files);
+
+                if (currentImages.length === 0) {
+                    for (let i = 0; i < result.length; i++) {
+                        updateImages.push({
+                            public_id: result[i].key,
+                            url: result[i].Location,
+                        });
+                    }
+                } else {
+                    // Push current images and push new images (if have)
+                    for (let i = 0; i < currentImages.length; i++) {
+                        updateImages.push({
+                            public_id: currentImages[i].public_id,
+                            url: currentImages[i].url,
+                        });
+                    }
+                    for (let i = 0; i < result.length; i++) {
+                        updateImages.push({
+                            public_id: result[i].key,
+                            url: result[i].Location,
+                        });
+                    }
+                }
+
+                req.body.images = updateImages;
 
                 property = await Property.findByIdAndUpdate(
                     req.query.id,
@@ -67,18 +129,8 @@ const handler = async (req, res) => {
                     });
                 }
 
-                cloudinary.api.delete_resources_by_prefix(
-                    `properties/${req.query.id}`,
-                    (err) => {
-                        console.log(err);
-                        cloudinary.v2.api.delete_folder(
-                            `properties/${req.query.id}`,
-                            (err) => {
-                                console.log(err);
-                            }
-                        );
-                    }
-                );
+                //Deleting Images From AWS S3
+                await deleteFiles(property.images);
 
                 await property.remove();
 
@@ -100,6 +152,12 @@ const handler = async (req, res) => {
             });
             break;
     }
+};
+
+export const config = {
+    api: {
+        bodyParser: false,
+    },
 };
 
 export default isAuthenticatedUser(authorizeRoles(handler, "admin"));

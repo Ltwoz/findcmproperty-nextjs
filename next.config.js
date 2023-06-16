@@ -8,6 +8,7 @@ const nextConfig = {
             "cdnb.artstation.com",
             "dummyimage.com",
             "res.cloudinary.com",
+            `${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_BUCKET_REGION}.amazonaws.com`
         ],
     },
 };

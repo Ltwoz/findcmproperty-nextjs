@@ -1,13 +1,13 @@
 import Layout from "@/components/layouts/layout";
 import Head from "next/head";
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import axios from "axios";
 import { useToast } from "@/components/contexts/toast-context";
 import Select from "@/components/ui/select-dropdown";
-import LoadingSpiner from "@/components/ui/spiner";
+import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
 import "react-quill/dist/quill.snow.css";
+import Image from "next/image";
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 const categoryOptions = [
@@ -22,14 +22,13 @@ const typeOptions = [
     { label: "Rent", value: "Rent" },
 ];
 
-const UpdatePropertyPage = ({ id }) => {
-    const [property, setProperty] = useState({});
+const NewPropertyPage = () => {
+    const router = useRouter();
 
     // CRUD State.
-    const [firstLoad, setFirstLoad] = useState(true);
-    const [loading, setLoading] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
     const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(false);
 
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
@@ -45,84 +44,29 @@ const UpdatePropertyPage = ({ id }) => {
         baths: "",
     });
     const [features, setFeatures] = useState({
-        ac: "",
-        balcony: "",
-        tv: "",
-        internet: "",
-        pet: "",
-        bathtub: "",
+        ac: false,
+        balcony: false,
+        tv: false,
+        internet: false,
+        pet: false,
+        bathtub: false,
     });
     const [services, setServices] = useState({
-        security: "",
-        cctv: "",
-        elevator: "",
-        pool: "",
-        gym: "",
-        parking: "",
-        garden: "",
+        security: false,
+        cctv: false,
+        elevator: false,
+        pool: false,
+        gym: false,
+        parking: false,
+        garden: false,
     });
-    const [files, setFiles] = useState([]);
     const [images, setImages] = useState([]);
     const [imagesPreview, setImagesPreview] = useState([]);
 
-    const [isActive, setIsActive] = useState(null);
-    const [isFeatured, setIsFeatured] = useState(null);
+    const [isActive, setIsActive] = useState(true);
+    const [isFeatured, setIsFeatured] = useState(false);
 
     const toast = useToast();
-
-    useEffect(() => {
-        const getProperty = async () => {
-            try {
-                const { data } = await axios.get(`/api/admin/properties/${id}`);
-                setProperty(data.property);
-            } catch (error) {
-                console.log(error);
-            } finally {
-                setFirstLoad(false);
-            }
-        };
-
-        if (id) {
-            getProperty();
-        }
-    }, [id]);
-
-    useEffect(() => {
-        setName(property.name);
-        setDescription(property.description);
-        setPropertyId(property.propertyId);
-        setPrice(property.price);
-        setType({ label: property.type, value: property.type });
-        setCategory({ label: property.category, value: property.category });
-
-        setDetails({
-            areaSqM: property.details?.areaSqM,
-            beds: property.details?.beds,
-            baths: property.details?.baths,
-        });
-        setAddress(property.address);
-        setFeatures({
-            ac: property.features?.ac,
-            balcony: property.features?.balcony,
-            tv: property.features?.tv,
-            internet: property.features?.internet,
-            pet: property.features?.pet,
-            bathtub: property.features?.bathtub,
-        });
-        setServices({
-            security: property.services?.security,
-            cctv: property.services?.cctv,
-            elevator: property.services?.elevator,
-            pool: property.services?.pool,
-            gym: property.services?.gym,
-            parking: property.services?.parking,
-            garden: property.services?.garden,
-        });
-        setImages(property.images);
-        setImagesPreview(property.images);
-        setIsActive(property.isActive);
-        setIsFeatured(property.isFeatured);
-    }, [property]);
 
     useEffect(() => {
         if (error) {
@@ -137,7 +81,7 @@ const UpdatePropertyPage = ({ id }) => {
         if (isSuccess) {
             toast.add({
                 title: "Success!",
-                text: "Property updated.",
+                text: "Created new property.",
                 icon: "success",
             });
             setIsSuccess(false);
@@ -161,14 +105,8 @@ const UpdatePropertyPage = ({ id }) => {
         formData.set("services", JSON.stringify(services));
         formData.set("isActive", isActive);
         formData.set("isFeatured", isFeatured);
-
-        console.log("images before pass to form :", images);
-
         images.forEach((image) => {
-            formData.append("images[]", JSON.stringify(image));
-        });
-        files.forEach((file) => {
-            formData.append("files", file);
+            formData.append("images", image);
         });
 
         const config = { headers: { "Content-Type": "multipart/form-data" } };
@@ -176,14 +114,13 @@ const UpdatePropertyPage = ({ id }) => {
         try {
             setLoading(true);
 
-            const { data } = await axios.put(
-                `/api/admin/properties/${id}`,
+            const { data } = await axios.post(
+                `/api/admin/properties/new-property`,
                 formData,
                 config
             );
 
             setIsSuccess(data.success);
-            console.log(data);
         } catch (error) {
             setError(error.message);
             console.error(error.message);
@@ -203,29 +140,10 @@ const UpdatePropertyPage = ({ id }) => {
         setImages(newImages);
     }
 
-    if (firstLoad) {
-        return (
-            <Layout isDashboard={true}>
-                <LoadingSpiner />
-            </Layout>
-        );
-    }
-
-    if (Object.keys(property).length === 0) {
-        return (
-            <Layout isDashboard={true}>
-                <Head>
-                    <title>Not found - Find CM Property</title>
-                </Head>
-                <div>Not found</div>
-            </Layout>
-        );
-    }
-
     return (
         <Layout isDashboard={true}>
             <Head>
-                <title>{name} - Find CM Property</title>
+                <title>New Property - Find CM Property</title>
             </Head>
             <div className="w-full">
                 <div
@@ -233,16 +151,14 @@ const UpdatePropertyPage = ({ id }) => {
                     className="flex flex-col md:flex-row gap-4 py-6 items-start md:items-center justify-between"
                 >
                     <div className="flex flex-col">
-                        <h2 className="text-2xl font-bold">
-                            Update Properties
-                        </h2>
+                        <h2 className="text-2xl font-bold">New Properties</h2>
                         <p className="text-sm">Welcome to admin panel</p>
                     </div>
                     <div className="flex flex-col">
                         <p className="text-sm">
                             <span>Home</span> / <span>Dashboard</span> /{" "}
                             <span>Properties</span> /{" "}
-                            <span>Update Property</span>
+                            <span>New Properties</span>
                         </p>
                     </div>
                 </div>
@@ -256,10 +172,10 @@ const UpdatePropertyPage = ({ id }) => {
                         >
                             <div className="col-span-12">
                                 <h3 className="text-base md:text-lg font-medium leading-6">
-                                    Update Property
+                                    Create Property
                                 </h3>
                                 <p className="mt-1 text-xs md:text-sm text-gray-600">
-                                    Update property {name}
+                                    Create new property
                                 </p>
                             </div>
 
@@ -703,31 +619,6 @@ const UpdatePropertyPage = ({ id }) => {
                                     className="mt-1 p-2 block w-full rounded-md border focus:outline-none border-gray-300 focus:border-blue-600 shadow-sm text-sm md:text-base"
                                 />
                             </div>
-                            <div className="col-span-12">
-                                <div className="flex items-center justify-center border rounded-md h-[200px]">
-                                    Google Map.
-                                </div>
-                            </div>
-                            <div className="col-span-6">
-                                <label className="block text-xs md:text-sm font-medium tracking-wide">
-                                    Latitude
-                                </label>
-                                <input
-                                    type="text"
-                                    name="coordinate.lat"
-                                    className="mt-1 p-2 block w-full rounded-md border focus:outline-none border-gray-300 focus:border-blue-600 shadow-sm text-sm md:text-base"
-                                />
-                            </div>
-                            <div className="col-span-6">
-                                <label className="block text-xs md:text-sm font-medium tracking-wide">
-                                    Longitude
-                                </label>
-                                <input
-                                    type="text"
-                                    name="coordinate.lng"
-                                    className="mt-1 p-2 block w-full rounded-md border focus:outline-none border-gray-300 focus:border-blue-600 shadow-sm text-sm md:text-base"
-                                />
-                            </div>
                         </div>
                         <div
                             id="images"
@@ -814,10 +705,7 @@ const UpdatePropertyPage = ({ id }) => {
                                         Preview
                                     </h3>
                                     <p className="mt-1 text-sm text-gray-600 mb-4">
-                                        <span className="font-semibold">
-                                            {images.length}
-                                        </span>{" "}
-                                        file(s)
+                                        <span className="font-semibold">{images.length}</span> file(s)
                                     </p>
 
                                     <hr className="w-full mb-4" />
@@ -952,7 +840,7 @@ const UpdatePropertyPage = ({ id }) => {
                                             />
                                         </svg>
                                         <span className="block">
-                                            {loading ? "Loading" : "Update"}
+                                            {loading ? "Loading" : "Create"}
                                         </span>
                                     </div>
                                 </button>
@@ -965,14 +853,4 @@ const UpdatePropertyPage = ({ id }) => {
     );
 };
 
-export default UpdatePropertyPage;
-
-export const getServerSideProps = async (ctx) => {
-    const id = ctx.params.id;
-
-    return {
-        props: {
-            id,
-        },
-    };
-};
+export default NewPropertyPage;

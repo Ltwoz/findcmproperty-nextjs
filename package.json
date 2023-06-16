@@ -24,6 +24,7 @@
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^6.9.2",
     "multer": "1.4.5-lts.1",
+    "nanoid": "^4.0.2",
     "next": "13.1.6",
     "next-auth": "^4.19.2",
     "next-s3-upload": "^0.3.0",
