@@ -39,7 +39,7 @@ const AdminMessagesPage = () => {
     }, [debounceValue]);
 
     useEffect(() => {
-        const getUsers = async () => {
+        const getMessages = async () => {
             let link = `/api/admin/messages?page=${page}&message=${
                 search ? search : ""
             }`;
@@ -51,7 +51,7 @@ const AdminMessagesPage = () => {
             setLoading(false);
         };
 
-        getUsers().catch(() => {
+        getMessages().catch(() => {
             console.error;
             setLoading(false);
         });

@@ -1,7 +1,6 @@
 import dbConnect from "@/lib/db-connect";
 import { authorizeRoles, isAuthenticatedUser } from "@/middlewares/auth";
 import Property from "@/models/property";
-import cloudinary from "@/lib/cloudinary";
 
 import { uploadFile, deleteFiles } from "@/utils/s3";
 import multer from "multer";
