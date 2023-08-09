@@ -774,7 +774,7 @@ const UpdatePropertyPage = ({ id }) => {
                                     <input
                                         id="dropzone-file"
                                         type="file"
-                                        accept=".jpeg, .jpg, .png"
+                                        accept=".jpeg, .jpg, .png, .mp4"
                                         multiple
                                         onChange={(e) => {
                                             const files = Array.from(
